@@ -38,12 +38,14 @@ export default {
                     key: 'receipt_no',
                     label: this.$t('accounting.receipt_no'),
                     sortable: true,
+                    sortDirection: 'desc',
                     class: 'text-right fit'
                 },
                 {
                     key: 'date',
                     label: this.$t('app.date'),
                     sortable: true,
+                    sortDirection: 'desc',
                     formatter: this.dateFormat,
                     class: 'fit'
                 },
@@ -63,11 +65,14 @@ export default {
                             return 'text-danger'
                         }
                         return 'text-success'
-                    }
+                    },
+                    sortable: true,
+                    sortDirection: 'desc'
                 },
                 {
                     key: 'category',
-                    label: this.$t('app.category')
+                    label: this.$t('app.category'),
+                    sortable: true
                 },
                 {
                     key: 'description',
@@ -75,12 +80,14 @@ export default {
                 },
                 {
                     key: 'attendee',
-                    label: this.$t('accounting.attendee')
+                    label: this.$t('accounting.attendee'),
+                    sortable: true
                 },
                 {
                     key: 'created_at',
                     label: this.$t('app.registered'),
                     sortable: true,
+                    sortDirection: 'desc',
                     formatter: this.dateTimeFormat,
                     class: 'fit'
                 }

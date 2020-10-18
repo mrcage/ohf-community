@@ -103,48 +103,61 @@ class MoneyTransaction extends Model implements Auditable
      * Scope a query to only include transactions matching the given filter conditions
      *
      * @param \Illuminate\Database\Eloquent\Builder  $query
-     * @param array $filter
+     * @param string|array $filter
      * @param bool|null $skipDates
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeForFilter($query, array $filter, ?bool $skipDates = false)
+    public function scopeForFilter($query, $filter, ?bool $skipDates = false)
     {
-        foreach (config('accounting.filter_columns') as $col) {
-            if (!empty($filter[$col])) {
-                if ($col == 'today') {
-                    $query->whereDate('created_at', Carbon::today());
-                } elseif ($col == 'controlled') {
-                    if ($filter[$col] == 'yes') {
-                        $query->whereNotNull('controlled_at');
-                    } elseif ($filter[$col] == 'no') {
-                        $query->whereNull('controlled_at');
+        if (is_array($filter)) {
+            foreach (config('accounting.filter_columns') as $col) {
+                if (!empty($filter[$col])) {
+                    if ($col == 'today') {
+                        $query->whereDate('created_at', Carbon::today());
+                    } elseif ($col == 'controlled') {
+                        if ($filter[$col] == 'yes') {
+                            $query->whereNotNull('controlled_at');
+                        } elseif ($filter[$col] == 'no') {
+                            $query->whereNull('controlled_at');
+                        }
+                    } elseif ($col == 'no_receipt') {
+                        $query->where(function ($query) {
+                            $query->whereNull('receipt_no');
+                            $query->orWhereNull('receipt_pictures');
+                            $query->orWhere('receipt_pictures', '[]');
+                        });
+                    } elseif ($col == 'supplier') {
+                        $query->whereHas('supplier', function (Builder $query) use ($filter, $col) {
+                            $query->where('id', $filter[$col])
+                                ->orWhere('slug', $filter[$col])
+                                ->orWhere('name', $filter[$col]);
+                        });
+                    } elseif ($col == 'attendee' || $col == 'description') {
+                        $query->where($col, 'like', '%' . $filter[$col] . '%');
+                    } else {
+                        $query->where($col, $filter[$col]);
                     }
-                } elseif ($col == 'no_receipt') {
-                    $query->where(function ($query) {
-                        $query->whereNull('receipt_no');
-                        $query->orWhereNull('receipt_pictures');
-                        $query->orWhere('receipt_pictures', '[]');
-                    });
-                } elseif ($col == 'supplier') {
-                    $query->whereHas('supplier', function (Builder $query) use ($filter, $col) {
-                        $query->where('id', $filter[$col])
-                            ->orWhere('slug', $filter[$col])
-                            ->orWhere('name', $filter[$col]);
-                    });
-                } elseif ($col == 'attendee' || $col == 'description') {
-                    $query->where($col, 'like', '%' . $filter[$col] . '%');
-                } else {
-                    $query->where($col, $filter[$col]);
                 }
             }
-        }
-        if (!$skipDates) {
-            if (!empty($filter['date_start'])) {
-                $query->whereDate('date', '>=', $filter['date_start']);
+            if (!$skipDates) {
+                if (!empty($filter['date_start'])) {
+                    $query->whereDate('date', '>=', $filter['date_start']);
+                }
+                if (!empty($filter['date_end'])) {
+                    $query->whereDate('date', '<=', $filter['date_end']);
+                }
             }
-            if (!empty($filter['date_end'])) {
-                $query->whereDate('date', '<=', $filter['date_end']);
-            }
+        } else {
+            $query->where('description', 'like', '%' . $filter . '%')
+                ->orWhereDate('date', $filter)
+                ->orWhere('amount', $filter)
+                ->orWhere('receipt_no', $filter)
+                ->orWhere('category', 'like', '%' . $filter . '%')
+                ->orWhere('secondary_category', 'like', '%' . $filter . '%')
+                ->orWhere('project', 'like', '%' . $filter . '%')
+                ->orWhere('location', 'like', '%' . $filter . '%')
+                ->orWhere('cost_center', 'like', '%' . $filter . '%')
+                ->orWhere('attendee', 'like', '%' . $filter . '%');
         }
         return $query;
     }
@@ -210,7 +223,7 @@ class MoneyTransaction extends Model implements Auditable
     {
         $thumbPath = thumb_path($path, "jpeg");
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            Ghostscript::setGsPath("C:\Program Files\gs\gs9.52\bin\gswin64c.exe");
+            Ghostscript::setGsPath("C:\Program Files\gs\gs9.53.3\bin\gswin64c.exe");
         }
         $pdf = new \Spatie\PdfToImage\Pdf($path);
         $pdf->saveImage($thumbPath);

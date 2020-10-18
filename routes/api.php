@@ -181,6 +181,9 @@ Route::middleware(['language', 'auth'])
     ->group(function () {
         Route::resource('wallets', 'WalletsController');
 
+        Route::get('wallets/{wallet}/transactions', 'MoneyTransactionsController@index')
+            ->name('transactions.index');
+
         Route::post('transactions/{transaction}/receipt', 'MoneyTransactionsController@updateReceipt')
             ->name('transactions.updateReceipt');
 

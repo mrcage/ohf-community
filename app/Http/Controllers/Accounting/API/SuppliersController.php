@@ -155,7 +155,14 @@ class SuppliersController extends Controller
                 Rule::in([
                     'date',
                     'receipt_no',
+                    'amount',
                     'created_at',
+                    'category',
+                    'secondary_category',
+                    'project',
+                    'location',
+                    'cost_center',
+                    'attendee',
                 ]),
             ],
             'sortDirection' => [
@@ -172,7 +179,7 @@ class SuppliersController extends Controller
 
         return MoneyTransactionResource::collection($supplier->transactions()
             ->orderBy($sortBy, $sortDirection)
-            ->forFilter(['description' => $filter])
+            ->forFilter($filter)
             ->paginate($pageSize));
     }
 

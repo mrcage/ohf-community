@@ -55,7 +55,7 @@ class MoneyTransactionsController extends Controller
         $sortColumns = [
             'date' => __('app.date'),
             'category' => __('app.category'),
-            'secondary_category' => __('accounting.secondary_category'),
+            'secondary_category' => __('app.secondary_category'),
             'project' => __('app.project'),
             'location' => __('app.location'),
             'cost_center' => __('accounting.cost_center'),
