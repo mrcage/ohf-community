@@ -72,6 +72,17 @@ class MoneyTransactionsController extends Controller
             ->paginate($pageSize));
     }
 
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Accounting\MoneyTransaction  $transaction
+     * @return \Illuminate\Http\Response
+     */
+    public function show(MoneyTransaction $transaction)
+    {
+        return new MoneyTransactionResource($transaction->load('supplier'));
+    }
+
     public function updateReceipt(Request $request, MoneyTransaction $transaction)
     {
         $this->authorize('update', $transaction);

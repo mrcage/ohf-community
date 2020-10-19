@@ -2,6 +2,7 @@
 
 return [
     'accounting' => 'Buchhaltung',
+    'transaction' => 'Transaktion',
     'transactions' => 'Transaktionen',
     'all_transactions' => 'Alle Transaktionen',
     'summary' => 'Zusammenfassung',

@@ -8,7 +8,7 @@
                 >
                     {{ transactionsCount }}
                 </b-badge>
-            </template>                  
+            </template>
         </tab-nav>
         <router-view />
     </div>
@@ -41,7 +41,7 @@ export default {
                     text: this.$t('accounting.transactions'),
                     key: 'transactions'
                 },
-            ]            
+            ]
         }
     },
     watch: {
@@ -61,6 +61,6 @@ export default {
                 this.error = err
             }
         },
-    }    
+    }
 }
 </script>

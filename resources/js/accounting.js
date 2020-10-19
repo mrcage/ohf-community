@@ -20,6 +20,8 @@ Vue.config.productionTip = false
 
 import AccountingApp from '@/app/AccountingApp'
 
+import '@/utils/filters'
+
 new Vue({
     el: '#accounting-app',
     // store,

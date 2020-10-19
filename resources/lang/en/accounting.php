@@ -2,6 +2,7 @@
 
 return [
     'accounting' => 'Accounting',
+    'transaction' => 'Transaction',
     'transactions' => 'Transactions',
     'all_transactions' => 'All transactions',
     'summary' => 'Summary',

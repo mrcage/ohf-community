@@ -183,6 +183,8 @@ Route::middleware(['language', 'auth'])
 
         Route::get('wallets/{wallet}/transactions', 'MoneyTransactionsController@index')
             ->name('transactions.index');
+        Route::get('transactions/{transaction}', 'MoneyTransactionsController@show')
+            ->name('transactions.show');
 
         Route::post('transactions/{transaction}/receipt', 'MoneyTransactionsController@updateReceipt')
             ->name('transactions.updateReceipt');
