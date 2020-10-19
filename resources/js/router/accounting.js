@@ -13,6 +13,7 @@ import SupplierViewPage from '@/pages/accounting/SupplierViewPage'
 import SupplierDetails from '@/components/accounting/SupplierDetails'
 import SupplierTransactions from '@/components/accounting/SupplierTransactions'
 import SupplierEditPage from '@/pages/accounting/SupplierEditPage'
+import TransactionsIndexPage from '@/pages/accounting/TransactionsIndexPage'
 import NotFoundPage from '@/pages/NotFoundPage'
 
 import i18n from '@/plugins/i18n'
@@ -69,6 +70,20 @@ export default new VueRouter({
                 default: true,
                 header: {
                     title: i18n.t('accounting.edit_wallet'),
+                }
+            }
+        },
+        {
+            path: '/wallets/:walletId/transactions',
+            name: 'accounting.transactions.index',
+            components: {
+                default: TransactionsIndexPage,
+                header: PageHeader
+            },
+            props: {
+                default: true,
+                header: {
+                    title: i18n.t('accounting.transactions'),
                 }
             }
         },

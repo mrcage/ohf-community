@@ -7,6 +7,7 @@ use App\Models\Accounting\MoneyTransaction;
 use App\Http\Resources\Accounting\MoneyTransaction as MoneyTransactionResource;
 use App\Models\Accounting\Wallet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class MoneyTransactionsController extends Controller
@@ -91,6 +92,6 @@ class MoneyTransactionsController extends Controller
         }
         $transaction->save();
 
-        return response(null, 204);
+        return collect($transaction->receipt_pictures)->map(fn ($f) => Storage::url($f));
     }
 }

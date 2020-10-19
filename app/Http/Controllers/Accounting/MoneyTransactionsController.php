@@ -21,12 +21,19 @@ class MoneyTransactionsController extends Controller
 {
     use ExportableActions;
 
+    public function index(Wallet $wallet)
+    {
+        return view('accounting.transactions', [
+            'wallet' => $wallet,
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Wallet $wallet, Request $request)
+    public function index2(Wallet $wallet, Request $request)
     {
         $this->authorize('viewAny', MoneyTransaction::class);
         $this->authorize('view', $wallet);

@@ -47,7 +47,7 @@ export default {
                     sortable: true,
                     sortDirection: 'desc',
                     formatter: this.dateFormat,
-                    class: 'fit'
+                    class: 'text-right fit'
                 },
                 {
                     key: 'amount',
@@ -89,7 +89,7 @@ export default {
                     sortable: true,
                     sortDirection: 'desc',
                     formatter: this.dateTimeFormat,
-                    class: 'fit'
+                    class: 'text-right fit'
                 }
             ]
         }
