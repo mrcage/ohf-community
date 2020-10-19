@@ -4,7 +4,7 @@
         fluid
         class="px-0"
     >
-        <b-list-group>
+        <b-list-group class="mb-3">
             <two-col-list-group-item :title="$t('accounting.receipt')">
                 {{ transaction.receipt_no }}
             </two-col-list-group-item>
@@ -53,10 +53,17 @@
                 :title="$t('accounting.supplier')"
             >
                 <b-link
+                    v-if="transaction.can_view_supplier"
                     :to="{ name: 'accounting.suppliers.show', params: { id: transaction.supplier.slug }}"
                 >
                     {{ transaction.supplier.name }}
                 </b-link>
+                <template v-else>
+                    {{ transaction.supplier.name }}
+                </template>
+                <template v-if="transaction.supplier.category">
+                    <br><small>{{ transaction.supplier.category }}</small>
+                </template>
             </two-col-list-group-item>
             <two-col-list-group-item
                 v-if="transaction.attendee"
@@ -76,6 +83,34 @@
             <two-col-list-group-item :title="$t('app.last_updated')">
                 {{ transaction.updated_at | dateTimeFormat }}
             </two-col-list-group-item>
+            <two-col-list-group-item :title="$t('accounting.controlled')">
+                <template v-if="transaction.controlled_at">
+                    {{ transaction.controlled_at | dateTimeFormat }}
+                    <template v-if="transaction.controlled_by">
+                        ({{ transaction.controller.name }})
+                        <b-button
+                            v-if="transaction.can_undo_controlling"
+                            variant="secondary"
+                            size="sm"
+                            :disabled="isBusy"
+                            @click="undoControlled"
+                        >
+                            {{ $t('app.undo') }}
+                        </b-button>
+                    </template>
+                </template>
+                <template v-else>
+                    <b-button
+                        variant="primary"
+                        size="sm"
+                        :disabled="isBusy"
+                        @click="markControlled"
+                    >
+                        {{ $t('accounting.mark_controlled') }}
+                    </b-button>
+                </template>
+            </two-col-list-group-item>
+
         </b-list-group>
     </b-container>
     <p v-else>
@@ -97,7 +132,8 @@ export default {
     },
     data () {
         return {
-            transaction: null
+            transaction: null,
+            isBusy: false
         }
     },
     watch: {
@@ -116,6 +152,26 @@ export default {
             } catch (err) {
                 alert(err)
             }
+        },
+        async markControlled () {
+            this.isBusy = true
+            try {
+                let data = await transactionsApi.markControlled(this.id)
+                this.transaction = data.data
+            } catch (err) {
+                alert(err)
+            }
+            this.isBusy = false
+        },
+        async undoControlled () {
+            this.isBusy = true
+            try {
+                let data = await transactionsApi.undoControlled(this.id)
+                this.transaction = data.data
+            } catch (err) {
+                alert(err)
+            }
+            this.isBusy = false
         }
     }
 }

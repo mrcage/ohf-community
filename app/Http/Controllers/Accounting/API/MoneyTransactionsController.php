@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Accounting\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Accounting\StoreControlled;
 use App\Models\Accounting\MoneyTransaction;
 use App\Http\Resources\Accounting\MoneyTransaction as MoneyTransactionResource;
 use App\Models\Accounting\Wallet;
@@ -80,7 +81,9 @@ class MoneyTransactionsController extends Controller
      */
     public function show(MoneyTransaction $transaction)
     {
-        return new MoneyTransactionResource($transaction->load('supplier'));
+        return new MoneyTransactionResource($transaction
+            ->load('supplier')
+            ->load('controller'));
     }
 
     public function updateReceipt(Request $request, MoneyTransaction $transaction)
@@ -104,5 +107,27 @@ class MoneyTransactionsController extends Controller
         $transaction->save();
 
         return collect($transaction->receipt_pictures)->map(fn ($f) => Storage::url($f));
+    }
+
+    public function markControlled(StoreControlled $request, MoneyTransaction $transaction)
+    {
+        $this->authorize('update', $transaction);
+
+        $transaction->controlled_at = now();
+        $transaction->controlled_by = $request->user()->id;
+        $transaction->save();
+
+        return $this->show($transaction);
+    }
+
+    public function undoControlled(MoneyTransaction $transaction)
+    {
+        $this->authorize('undoControlling', $transaction);
+
+        $transaction->controlled_at = null;
+        $transaction->controlled_by = null;
+        $transaction->save();
+
+        return $this->show($transaction);
     }
 }

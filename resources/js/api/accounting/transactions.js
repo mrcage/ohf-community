@@ -27,5 +27,13 @@ export default {
             data.append('img[]', files[i], files[i].name)
         }
         return await api.postFormData(url, data)
+    },
+    async markControlled (id) {
+        const url = route('api.accounting.transactions.markControlled', id)
+        return await api.post(url)
+    },
+    async undoControlled (id) {
+        const url = route('api.accounting.transactions.undoControlled', id)
+        return await api.delete(url)
     }
 }
