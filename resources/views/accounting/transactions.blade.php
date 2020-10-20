@@ -13,10 +13,15 @@
 @section('footer')
     @php
         $permissions = [
+            'configure-accounting' => Gate::allows('configure-accounting'),
+        ];
+        $config = [
+            'accounting.thumbnail_size' => config('accounting.thumbnail_size'),
         ];
     @endphp
     <script>
-        window.Laravel.permissions = @json($permissions)
+        window.Laravel.permissions = @json($permissions);
+        window.Laravel.config = @json($config);
     </script>
     <script src="{{ asset('js/accounting.js') }}?v={{ $app_version }}"></script>
 @endsection

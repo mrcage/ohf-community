@@ -35,5 +35,9 @@ export default {
     async undoControlled (id) {
         const url = route('api.accounting.transactions.undoControlled', id)
         return await api.delete(url)
+    },
+    async undoBooking (id) {
+        const url = route('api.accounting.transactions.undoBooking', id)
+        return await api.put(url)
     }
 }

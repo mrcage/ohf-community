@@ -169,8 +169,6 @@ Route::middleware(['language', 'auth'])
             ->name('transactions.doExport');
         Route::get('wallets/{wallet}/transactions/summary', 'SummaryController@summary')
             ->name('transactions.summary');
-        Route::get('transactions/{transaction}/snippet', 'MoneyTransactionsController@snippet')
-            ->name('transactions.snippet');
         Route::put('transactions/{transaction}/undoBooking', 'MoneyTransactionsController@undoBooking')
             ->name('transactions.undoBooking');
         Route::get('wallets/{wallet}/transactions', 'MoneyTransactionsController@index')

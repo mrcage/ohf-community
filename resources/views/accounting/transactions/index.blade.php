@@ -74,7 +74,7 @@
                             </td>
                             <td class="fit">
                                 <a href="{{ route('accounting.transactions.show', $transaction) }}"
-                                    data-url="{{ route('accounting.transactions.snippet', $transaction) }}"
+                                    {{-- data-url="{{ route('accounting.transactions.snippet', $transaction) }}" --}}
                                     @can('update', $transaction) data-edit-url="{{ route('accounting.transactions.edit', $transaction) }}"@endcan
                                     class="details-link">
                                     {{ $transaction->date }}
@@ -239,7 +239,7 @@
                         .html(footer_html)
                         .show();
                 }
-                @include('accounting.transactions.controlled')
+                {{-- @include('accounting.transactions.controlled') --}}
             });
         });
     });

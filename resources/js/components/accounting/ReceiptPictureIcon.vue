@@ -46,7 +46,7 @@ export default {
     data () {
         return {
             isBusy: false,
-            urls: this.pictures
+            urls: this.pictures.map(e => e.url)
         }
     },
     computed: {

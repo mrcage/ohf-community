@@ -59,7 +59,7 @@ export default {
                 },
                 {
                     key: 'receipt_no',
-                    label: this.$t('accounting.receipt_no'),
+                    label: this.$t('accounting.receipt'),
                     sortable: true,
                     sortDirection: 'desc',
                     class: 'text-right fit'

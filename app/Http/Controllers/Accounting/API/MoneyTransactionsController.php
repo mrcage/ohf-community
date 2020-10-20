@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Accounting\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Accounting\StoreControlled;
+use App\Http\Requests\Accounting\StoreUndoBooking;
 use App\Models\Accounting\MoneyTransaction;
 use App\Http\Resources\Accounting\MoneyTransaction as MoneyTransactionResource;
 use App\Models\Accounting\Wallet;
+use App\Support\Accounting\Webling\Entities\Entrygroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -126,6 +128,17 @@ class MoneyTransactionsController extends Controller
 
         $transaction->controlled_at = null;
         $transaction->controlled_by = null;
+        $transaction->save();
+
+        return $this->show($transaction);
+    }
+
+    public function undoBooking(MoneyTransaction $transaction, StoreUndoBooking $request)
+    {
+        $this->authorize('undoBooking', $transaction);
+
+        $transaction->booked = false;
+        $transaction->external_id = null;
         $transaction->save();
 
         return $this->show($transaction);

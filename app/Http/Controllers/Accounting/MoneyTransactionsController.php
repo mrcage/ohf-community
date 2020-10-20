@@ -11,7 +11,6 @@ use App\Http\Requests\Accounting\StoreTransaction;
 use App\Models\Accounting\MoneyTransaction;
 use App\Models\Accounting\Supplier;
 use App\Models\Accounting\Wallet;
-use App\Support\Accounting\Webling\Entities\Entrygroup;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -307,38 +306,6 @@ class MoneyTransactionsController extends Controller
         return view('accounting.transactions', [
             'transaction' => $transaction,
         ]);
-
-        // $sortColumn = session('accounting.sortColumn', 'created_at');
-        // $sortOrder = session('accounting.sortOrder', 'desc');
-        // $filter = session('accounting.filter', []);
-        // $query = self::createIndexQuery($transaction->wallet, $filter, $sortColumn, $sortOrder);
-        // // TODO: can this be optimized, e.g. with a cursor??
-        // $res = $query->select('id')->get()->pluck('id')->toArray();
-        // $prev_id = null;
-        // $next_id = null;
-        // $cnt = count($res);
-        // for ($i = 0; $i < $cnt; $i++) {
-        //     $prev_id = $i > 0 ? $res[$i - 1] : null;
-        //     $next_id = $i < $cnt - 1 ? $res[$i + 1] : null;
-        //     if ($res[$i] == $transaction->id) {
-        //         break;
-        //     }
-        // }
-
-        // return view('accounting.transactions.show', [
-        //     'transaction' => $transaction,
-        //     'prev_id' => $prev_id,
-        //     'next_id' => $next_id,
-        // ]);
-    }
-
-    public function snippet(MoneyTransaction $transaction)
-    {
-        $this->authorize('view', $transaction);
-
-        return view('accounting.transactions.snippet', [
-            'transaction' => $transaction,
-        ]);
     }
 
     /**
@@ -505,25 +472,6 @@ class MoneyTransactionsController extends Controller
             return new WeblingMoneyTransactionsExport($wallet, $filter);
         }
         return new MoneyTransactionsExport($wallet, $filter);
-    }
-
-    public function undoBooking(MoneyTransaction $transaction)
-    {
-        $this->authorize('undoBooking', $transaction);
-
-        if ($transaction->external_id != null && Entrygroup::find($transaction->external_id) != null) {
-            return redirect()
-                ->route('accounting.transactions.show', $transaction)
-                ->with('error', __('accounting.transaction_not_updated_external_record_still_exists'));
-        }
-
-        $transaction->booked = false;
-        $transaction->external_id = null;
-        $transaction->save();
-
-        return redirect()
-            ->route('accounting.transactions.show', $transaction)
-            ->with('info', __('accounting.transactions_updated'));
     }
 
     private static function showIntermediateBalances(): bool
