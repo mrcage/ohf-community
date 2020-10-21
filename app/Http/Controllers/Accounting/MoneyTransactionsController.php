@@ -7,7 +7,6 @@ use App\Exports\Accounting\MoneyTransactionsMonthsExport;
 use App\Exports\Accounting\WeblingMoneyTransactionsExport;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Export\ExportableActions;
-use App\Http\Requests\Accounting\StoreTransaction;
 use App\Models\Accounting\MoneyTransaction;
 use App\Models\Accounting\Supplier;
 use App\Models\Accounting\Wallet;
@@ -103,7 +102,11 @@ class MoneyTransactionsController extends Controller
         }
         session(['accounting.filter' => $filter]);
 
-        $query = self::createIndexQuery($wallet, $filter, $sortColumn, $sortOrder);
+        $query = MoneyTransaction::query()
+            ->forWallet($wallet)
+            ->forFilter($filter)
+            ->orderBy($sortColumn, $sortOrder)
+            ->orderBy('created_at', 'DESC');
 
         // Get results
         $transactions = $query->paginate(250);
@@ -143,15 +146,6 @@ class MoneyTransactionsController extends Controller
                 ->orderBy('name')
                 ->get() : [],
         ]);
-    }
-
-    private static function createIndexQuery(Wallet $wallet, array $filter, string $sortColumn, string $sortOrder)
-    {
-        return MoneyTransaction::query()
-            ->forWallet($wallet)
-            ->forFilter($filter)
-            ->orderBy($sortColumn, $sortOrder)
-            ->orderBy('created_at', 'DESC');
     }
 
     /**
@@ -246,54 +240,6 @@ class MoneyTransactionsController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\Accounting\StoreTransaction  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Wallet $wallet, StoreTransaction $request)
-    {
-        $this->authorize('create', MoneyTransaction::class);
-        $this->authorize('view', $wallet);
-
-        $transaction = new MoneyTransaction();
-        $transaction->date = $request->date;
-        $transaction->receipt_no = $request->receipt_no;
-        $transaction->type = $request->type;
-        $transaction->amount = $request->amount;
-        $transaction->attendee = $request->attendee;
-        $transaction->category = $request->category;
-        if (self::useSecondaryCategories()) {
-            $transaction->secondary_category = $request->secondary_category;
-        }
-        $transaction->project = $request->project;
-        if (self::useLocations()) {
-            $transaction->location = $request->location;
-        }
-        if (self::useCostCenters()) {
-            $transaction->cost_center = $request->cost_center;
-        }
-        $transaction->description = $request->description;
-        $transaction->remarks = $request->remarks;
-
-        $transaction->supplier()->associate($request->input('supplier_id'));
-
-        $transaction->wallet()->associate($wallet);
-
-        if (isset($request->receipt_picture) && is_array($request->receipt_picture)) {
-            for ($i = 0; $i < count($request->receipt_picture); $i++) {
-                $transaction->addReceiptPicture($request->file('receipt_picture')[$i]);
-            }
-        }
-
-        $transaction->save();
-
-        return redirect()
-            ->route($request->submit == 'save_and_continue' ? 'accounting.transactions.create' : 'accounting.transactions.index', $transaction->wallet)
-            ->with('info', __('accounting.transactions_registered'));
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param  \App\Models\Accounting\MoneyTransaction  $transaction
@@ -318,90 +264,24 @@ class MoneyTransactionsController extends Controller
     {
         $this->authorize('update', $transaction);
 
-        return view('accounting.transactions.edit', [
+        return view('accounting.transactions', [
             'transaction' => $transaction,
-            'attendees' => MoneyTransaction::attendees(),
-            'categories' => self::getCategories(),
-            'fixed_categories' => Setting::has('accounting.transactions.categories'),
-            'secondary_categories' => self::useSecondaryCategories() ? self::getSecondaryCategories() : null,
-            'fixed_secondary_categories' => Setting::has('accounting.transactions.secondary_categories'),
-            'projects' => self::getProjects(),
-            'fixed_projects' => Setting::has('accounting.transactions.projects'),
-            'locations' => self::useLocations() ? self::getLocations() : null,
-            'fixed_locations' => Setting::has('accounting.transactions.locations'),
-            'cost_centers' => self::useCostCenters() ? self::getCostCenters() : null,
-            'fixed_cost_centers' => Setting::has('accounting.transactions.cost_centers'),
-            'suppliers' => Supplier::select('id', 'name', 'category')->orderBy('name')->get(),
         ]);
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Accounting\MoneyTransaction  $transaction
-     * @return \Illuminate\Http\Response
-     */
-    public function update(StoreTransaction $request, MoneyTransaction $transaction)
-    {
-        $this->authorize('update', $transaction);
-
-        $transaction->date = $request->date;
-        $transaction->receipt_no = $request->receipt_no;
-        $transaction->type = $request->type;
-        $transaction->amount = $request->amount;
-        $transaction->attendee = $request->attendee;
-        $transaction->category = $request->category;
-        if (self::useSecondaryCategories()) {
-            $transaction->secondary_category = $request->secondary_category;
-        }
-        $transaction->project = $request->project;
-        if (self::useLocations()) {
-            $transaction->location = $request->location;
-        }
-        if (self::useCostCenters()) {
-            $transaction->cost_center = $request->cost_center;
-        }
-        $transaction->description = $request->description;
-        $transaction->remarks = $request->remarks;
-
-        $transaction->supplier()->associate($request->input('supplier_id'));
-
-        if (isset($request->remove_receipt_picture) && is_array($request->remove_receipt_picture)) {
-            foreach ($request->remove_receipt_picture as $picture) {
-                $transaction->deleteReceiptPicture($picture);
-            }
-        }
-        elseif (isset($request->receipt_picture) && is_array($request->receipt_picture)) {
-            for ($i = 0; $i < count($request->receipt_picture); $i++) {
-                $transaction->addReceiptPicture($request->file('receipt_picture')[$i]);
-            }
-        }
-
-        $transaction->save();
-
-        return redirect()
-            ->route('accounting.transactions.index', $transaction->wallet)
-            ->with('info', __('accounting.transactions_updated'));
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Accounting\MoneyTransaction  $transaction
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(MoneyTransaction $transaction)
-    {
-        $this->authorize('delete', $transaction);
-
-        $wallet = $transaction->wallet;
-
-        $transaction->delete();
-
-        return redirect()
-            ->route('accounting.transactions.index', $wallet)
-            ->with('info', __('accounting.transactions_deleted'));
+        // return view('accounting.transactions.edit', [
+        //     'attendees' => MoneyTransaction::attendees(),
+        //     'categories' => self::getCategories(),
+        //     'fixed_categories' => Setting::has('accounting.transactions.categories'),
+        //     'secondary_categories' => self::useSecondaryCategories() ? self::getSecondaryCategories() : null,
+        //     'fixed_secondary_categories' => Setting::has('accounting.transactions.secondary_categories'),
+        //     'projects' => self::getProjects(),
+        //     'fixed_projects' => Setting::has('accounting.transactions.projects'),
+        //     'locations' => self::useLocations() ? self::getLocations() : null,
+        //     'fixed_locations' => Setting::has('accounting.transactions.locations'),
+        //     'cost_centers' => self::useCostCenters() ? self::getCostCenters() : null,
+        //     'fixed_cost_centers' => Setting::has('accounting.transactions.cost_centers'),
+        //     'suppliers' => Supplier::select('id', 'name', 'category')->orderBy('name')->get(),
+        // ]);
     }
 
     protected function exportAuthorize()

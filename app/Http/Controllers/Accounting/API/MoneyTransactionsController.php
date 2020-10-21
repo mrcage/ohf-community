@@ -4,14 +4,16 @@ namespace App\Http\Controllers\Accounting\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Accounting\StoreControlled;
+use App\Http\Requests\Accounting\StoreTransaction;
 use App\Http\Requests\Accounting\StoreUndoBooking;
 use App\Models\Accounting\MoneyTransaction;
 use App\Http\Resources\Accounting\MoneyTransaction as MoneyTransactionResource;
 use App\Models\Accounting\Wallet;
-use App\Support\Accounting\Webling\Entities\Entrygroup;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Setting;
 
 class MoneyTransactionsController extends Controller
 {
@@ -75,6 +77,57 @@ class MoneyTransactionsController extends Controller
             ->paginate($pageSize));
     }
 
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\Accounting\StoreTransaction  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Wallet $wallet, StoreTransaction $request)
+    {
+        $this->authorize('create', MoneyTransaction::class);
+        $this->authorize('view', $wallet);
+
+        $transaction = new MoneyTransaction();
+        $transaction->date = $request->date;
+        $transaction->receipt_no = $request->receipt_no;
+        $transaction->type = $request->type;
+        $transaction->amount = $request->amount;
+        $transaction->attendee = $request->attendee;
+        $transaction->category = $request->category;
+        if (self::useSecondaryCategories()) {
+            $transaction->secondary_category = $request->secondary_category;
+        }
+        $transaction->project = $request->project;
+        if (self::useLocations()) {
+            $transaction->location = $request->location;
+        }
+        if (self::useCostCenters()) {
+            $transaction->cost_center = $request->cost_center;
+        }
+        $transaction->description = $request->description;
+        $transaction->remarks = $request->remarks;
+
+        $transaction->supplier()->associate($request->input('supplier_id'));
+
+        $transaction->wallet()->associate($wallet);
+
+        if (isset($request->receipt_picture) && is_array($request->receipt_picture)) {
+            for ($i = 0; $i < count($request->receipt_picture); $i++) {
+                $transaction->addReceiptPicture($request->file('receipt_picture')[$i]);
+            }
+        }
+
+        $transaction->save();
+
+        return response(null, Response::HTTP_CREATED)
+            ->header('Location', route('api.accounting.transactions.show', $transaction));
+        // return redirect()
+        //     ->route($request->submit == 'save_and_continue' ? 'accounting.transactions.create' : 'accounting.transactions.index', $transaction->wallet)
+        //     ->with('info', __('accounting.transaction_registered'));
+    }
+
     /**
      * Display the specified resource.
      *
@@ -86,6 +139,71 @@ class MoneyTransactionsController extends Controller
         return new MoneyTransactionResource($transaction
             ->load('supplier')
             ->load('controller'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Accounting\MoneyTransaction  $transaction
+     * @return \Illuminate\Http\Response
+     */
+    public function update(StoreTransaction $request, MoneyTransaction $transaction)
+    {
+        $this->authorize('update', $transaction);
+
+        $transaction->date = $request->date;
+        $transaction->receipt_no = $request->receipt_no;
+        $transaction->type = $request->type;
+        $transaction->amount = $request->amount;
+        $transaction->attendee = $request->attendee;
+        $transaction->category = $request->category;
+        if (self::useSecondaryCategories()) {
+            $transaction->secondary_category = $request->secondary_category;
+        }
+        $transaction->project = $request->project;
+        if (self::useLocations()) {
+            $transaction->location = $request->location;
+        }
+        if (self::useCostCenters()) {
+            $transaction->cost_center = $request->cost_center;
+        }
+        $transaction->description = $request->description;
+        $transaction->remarks = $request->remarks;
+
+        $transaction->supplier()->associate($request->input('supplier_id'));
+
+        if (isset($request->remove_receipt_picture) && is_array($request->remove_receipt_picture)) {
+            foreach ($request->remove_receipt_picture as $picture) {
+                $transaction->deleteReceiptPicture($picture);
+            }
+        }
+        elseif (isset($request->receipt_picture) && is_array($request->receipt_picture)) {
+            for ($i = 0; $i < count($request->receipt_picture); $i++) {
+                $transaction->addReceiptPicture($request->file('receipt_picture')[$i]);
+            }
+        }
+
+        $transaction->save();
+
+        return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Accounting\MoneyTransaction  $transaction
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(MoneyTransaction $transaction)
+    {
+        $this->authorize('delete', $transaction);
+
+        $wallet = $transaction->wallet;
+
+        $transaction->delete();
+
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 
     public function updateReceipt(Request $request, MoneyTransaction $transaction)
@@ -108,7 +226,8 @@ class MoneyTransactionsController extends Controller
         }
         $transaction->save();
 
-        return collect($transaction->receipt_pictures)->map(fn ($f) => Storage::url($f));
+        return collect($transaction->receipt_pictures)
+            ->map(fn ($f) => Storage::url($f));
     }
 
     public function markControlled(StoreControlled $request, MoneyTransaction $transaction)
@@ -142,5 +261,130 @@ class MoneyTransactionsController extends Controller
         $transaction->save();
 
         return $this->show($transaction);
+    }
+
+    public function attendees()
+    {
+        return response()->json([
+            'data' => MoneyTransaction::attendees(),
+        ]);
+    }
+
+    public function categories(Request $request): array
+    {
+        return [
+            'data' => self::getCategories($request->has('existing')),
+            'meta' => [
+                'fixed' => Setting::has('accounting.transactions.categories'),
+            ],
+        ];
+    }
+
+    private static function getCategories(?bool $onlyExisting = false): array
+    {
+        if (! $onlyExisting && Setting::has('accounting.transactions.categories')) {
+            return collect(Setting::get('accounting.transactions.categories'))
+                ->sort()
+                ->toArray();
+        }
+        return MoneyTransaction::categories();
+    }
+
+    private static function useSecondaryCategories(): bool
+    {
+        return Setting::get('accounting.transactions.use_secondary_categories') ?? false;
+    }
+
+    public function secondaryCategories(Request $request): array
+    {
+        return [
+            'data' => self::useSecondaryCategories() ? self::getSecondaryCategories($request->has('existing')) : [],
+            'meta' => [
+                'enabled' => self::useSecondaryCategories(),
+                'fixed' => Setting::has('accounting.transactions.secondary_categories'),
+            ],
+        ];
+    }
+
+    private static function getSecondaryCategories(?bool $onlyExisting = false): array
+    {
+        if (! $onlyExisting && Setting::has('accounting.transactions.secondary_categories')) {
+            return collect(Setting::get('accounting.transactions.secondary_categories'))
+                ->sort()
+                ->toArray();
+        }
+        return MoneyTransaction::secondaryCategories();
+    }
+
+    public function projects(Request $request): array
+    {
+        return [
+            'data' => self::getProjects($request->has('existing')),
+            'meta' => [
+                'fixed' => Setting::has('accounting.transactions.projects'),
+            ],
+        ];
+    }
+
+    private static function getProjects(?bool $onlyExisting = false): array
+    {
+        if (! $onlyExisting && Setting::has('accounting.transactions.projects')) {
+            return collect(Setting::get('accounting.transactions.projects'))
+                ->sort()
+                ->toArray();
+        }
+        return MoneyTransaction::projects();
+    }
+
+    private static function useLocations(): bool
+    {
+        return Setting::get('accounting.transactions.use_locations') ?? false;
+    }
+
+    public function locations(Request $request): array
+    {
+        return [
+            'data' => self::useLocations() ? self::getLocations($request->has('existing')) : [],
+            'meta' => [
+                'enabled' => self::useLocations(),
+                'fixed' => Setting::has('accounting.transactions.locations'),
+            ],
+        ];
+    }
+
+    private static function getLocations(?bool $onlyExisting = false): array
+    {
+        if (! $onlyExisting && Setting::has('accounting.transactions.locations')) {
+            return collect(Setting::get('accounting.transactions.locations'))
+                ->sort()
+                ->toArray();
+        }
+        return MoneyTransaction::locations();
+    }
+
+    private static function useCostCenters(): bool
+    {
+        return Setting::get('accounting.transactions.use_cost_centers') ?? false;
+    }
+
+    public function costCenters(Request $request): array
+    {
+        return [
+            'data' => self::useCostCenters() ? self::getCostCenters($request->has('existing')) : [],
+            'meta' => [
+                'enabled' => self::useCostCenters(),
+                'fixed' => Setting::has('accounting.transactions.cost_centers'),
+            ],
+        ];
+    }
+
+    private static function getCostCenters(?bool $onlyExisting = false): array
+    {
+        if (! $onlyExisting && Setting::has('accounting.transactions.cost_centers')) {
+            return collect(Setting::get('accounting.transactions.cost_centers'))
+                ->sort()
+                ->toArray();
+        }
+        return MoneyTransaction::costCenters();
     }
 }

@@ -75,7 +75,7 @@
                     </two-col-list-group-item>
                     <two-col-list-group-item
                         v-if="transaction.remarks"
-                        :title="$t('accounting.remarks')"
+                        :title="$t('app.remarks')"
                     >
                         {{ transaction.remarks }}
                     </two-col-list-group-item>
@@ -229,7 +229,7 @@ export default {
             try {
                 let data = await transactionsApi.markControlled(this.id)
                 this.transaction = data.data
-                showSnackbar(this.$t('accounting.transactions_updated'))
+                showSnackbar(this.$t('accounting.transaction_updated'))
             } catch (err) {
                 alert(err)
             }
@@ -240,7 +240,7 @@ export default {
             try {
                 let data = await transactionsApi.undoControlled(this.id)
                 this.transaction = data.data
-                showSnackbar(this.$t('accounting.transactions_updated'))
+                showSnackbar(this.$t('accounting.transaction_updated'))
             } catch (err) {
                 alert(err)
             }
@@ -254,7 +254,7 @@ export default {
             try {
                 let data = await transactionsApi.undoBooking(this.id)
                 this.transaction = data.data
-                showSnackbar(this.$t('accounting.transactions_updated'))
+                showSnackbar(this.$t('accounting.transaction_updated'))
             } catch (err) {
                 alert(err)
             }

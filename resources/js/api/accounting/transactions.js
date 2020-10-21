@@ -39,5 +39,29 @@ export default {
     async undoBooking (id) {
         const url = route('api.accounting.transactions.undoBooking', id)
         return await api.put(url)
-    }
+    },
+    async attendees () {
+        const url = route('api.accounting.transactions.attendees')
+        return await api.get(url)
+    },
+    async categories () {
+        const url = route('api.accounting.transactions.categories')
+        return await api.get(url)
+    },
+    async projects () {
+        const url = route('api.accounting.transactions.projects')
+        return await api.get(url)
+    },
+    async secondaryCategories () {
+        const url = route('api.accounting.transactions.secondaryCategories')
+        return await api.get(url)
+    },
+    async locations () {
+        const url = route('api.accounting.transactions.locations')
+        return await api.get(url)
+    },
+    async costCenters () {
+        const url = route('api.accounting.transactions.costCenters')
+        return await api.get(url)
+    },
 }

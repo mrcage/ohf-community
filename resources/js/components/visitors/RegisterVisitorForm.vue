@@ -282,11 +282,3 @@ export default {
     }
 }
 </script>
-
-<style>
-    .required-marker legend:after {
-        content: '*';
-        color: red;
-        margin-left: 3px;
-    }
-</style>

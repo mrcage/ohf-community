@@ -181,10 +181,27 @@ Route::middleware(['language', 'auth'])
     ->group(function () {
         Route::resource('wallets', 'WalletsController');
 
+        Route::get('transactions/attendees', 'MoneyTransactionsController@attendees')
+            ->name('transactions.attendees');
+        Route::get('transactions/categories', 'MoneyTransactionsController@categories')
+            ->name('transactions.categories');
+        Route::get('transactions/secondaryCategories', 'MoneyTransactionsController@secondaryCategories')
+            ->name('transactions.secondaryCategories');
+        Route::get('transactions/projects', 'MoneyTransactionsController@projects')
+            ->name('transactions.projects');
+        Route::get('transactions/locations', 'MoneyTransactionsController@locations')
+            ->name('transactions.locations');
+        Route::get('transactions/costCenters', 'MoneyTransactionsController@costCenters')
+            ->name('transactions.costCenters');
+
         Route::get('wallets/{wallet}/transactions', 'MoneyTransactionsController@index')
             ->name('transactions.index');
         Route::get('transactions/{transaction}', 'MoneyTransactionsController@show')
             ->name('transactions.show');
+        Route::put('transactions/{transaction}', 'MoneyTransactionsController@update')
+            ->name('transactions.update');
+        Route::delete('transactions/{transaction}', 'MoneyTransactionsController@destroy')
+            ->name('transactions.destroy');
 
         Route::post('transactions/{transaction}/receipt', 'MoneyTransactionsController@updateReceipt')
             ->name('transactions.updateReceipt');

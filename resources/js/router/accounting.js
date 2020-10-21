@@ -15,6 +15,7 @@ import SupplierTransactions from '@/components/accounting/SupplierTransactions'
 import SupplierEditPage from '@/pages/accounting/SupplierEditPage'
 import TransactionsIndexPage from '@/pages/accounting/TransactionsIndexPage'
 import TransactionViewPage from '@/pages/accounting/TransactionViewPage'
+import TransactionEditPage from '@/pages/accounting/TransactionEditPage'
 import NotFoundPage from '@/pages/NotFoundPage'
 
 import i18n from '@/plugins/i18n'
@@ -99,6 +100,20 @@ export default new VueRouter({
                 default: true,
                 header: {
                     title: i18n.t('accounting.transaction'),
+                }
+            }
+        },
+        {
+            path: '/transactions/:id/edit',
+            name: 'accounting.transactions.edit',
+            components: {
+                default: TransactionEditPage,
+                header: PageHeader
+            },
+            props: {
+                default: true,
+                header: {
+                    title: i18n.t('accounting.edit_transaction'),
                 }
             }
         },

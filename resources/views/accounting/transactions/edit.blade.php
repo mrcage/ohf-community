@@ -1,28 +1,8 @@
 @extends('layouts.app')
 
-@section('title', __('accounting.edit_transaction_number', ['number' => $transaction->receipt_no]))
-
 @section('content')
     {!! Form::model($transaction, ['route' => ['accounting.transactions.update', $transaction], 'method' => 'put', 'files' => true]) !!}
-        <div class="form-row">
-            <div class="col-sm-auto">
-                {{ Form::bsNumber('receipt_no', null, [ 'required', 'step' => '1', 'min' => 1 ], __('accounting.receipt_no')) }}
-            </div>
-            <div class="col-sm-auto">
-                {{ Form::bsDate('date', null, [ 'required' ], __('app.date')) }}
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="col-sm-auto pb-3">
-            {{ Form::bsRadioInlineList('type', [ 'income' => __('accounting.income'), 'spending' => __('accounting.spending') ], 'spending', __('app.type')) }}
-            </div>
-            <div class="col-sm">
-                {{ Form::bsNumber('amount', null, [ 'required', 'step' => 'any', 'min' => 0], __('app.amount'), __('app.write_decimal_point_as_comma')) }}
-            </div>
-            <div class="col-sm">
-                {{ Form::bsText('attendee', null, [ 'list' => $attendees ], __('accounting.attendee')) }}
-            </div>
-        </div>
+
         <div class="form-row">
             <div class="col-sm">
                 @if($fixed_categories)
@@ -68,16 +48,7 @@
                 </div>
             @endif
         </div>
-        <div class="form-row">
-            <div class="col-sm">
-                {{ Form::bsText('description', null, [ 'required' ], __('app.description')) }}
-            </div>
-            @if($suppliers->count() > 0)
-                <div class="col-sm">
-                    {{ Form::bsSelect('supplier_id', collect($suppliers)->mapWithKeys(fn ($e) => [$e->id => $e->name . ($e->category !== null ? ' (' . $e->category . ')' : '')]), null, [ 'placeholder' => '- ' . __('accounting.supplier') . ' -' ], __('accounting.supplier')) }}
-                </div>
-            @endisset
-        </div>
+
         <div class="form-row">
             <div class="col-sm">
                 <label>@lang('accounting.receipt')</label>
@@ -111,8 +82,6 @@
                 {{ Form::bsText('remarks', null, [  ], __('app.remarks')) }}
             </div>
         </div>
-        <p>
-            {{ Form::bsSubmitButton(__('app.update')) }}
-        </p>
+
     {!! Form::close() !!}
 @endsection

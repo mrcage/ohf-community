@@ -15,7 +15,7 @@
         <p class="text-right">
             <small>
                 {{ $t('app.last_updated') }}:
-                {{ dateFormat(wallet.updated_at) }}
+                {{ wallet.updated_at | dateTimeFormat }}
             </small>
         </p>
     </b-container>
@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 import { showSnackbar } from '@/utils'
 import walletsApi from '@/api/accounting/wallets'
 import WalletForm from '@/components/accounting/WalletForm'
@@ -85,9 +84,6 @@ export default {
         },
         handleCnacel () {
             this.$router.push({ name: 'accounting.wallets.index' })
-        },
-        dateFormat (value) {
-            return moment(value).format('LLL')
         }
     }
 }

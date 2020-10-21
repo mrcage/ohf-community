@@ -58,6 +58,14 @@ class SuppliersController extends Controller
             ],
         ]);
 
+        if ($request->input('mode') == 'selectlist') {
+            return response()->json([
+                'data' => Supplier::select('id', 'slug', 'name', 'category')
+                    ->orderBy('name')
+                    ->get(),
+            ]);
+        }
+
         // Sorting, pagination and filter
         $sortBy = $request->input('sortBy', 'name');
         $sortDirection = $request->input('sortDirection', 'asc');
