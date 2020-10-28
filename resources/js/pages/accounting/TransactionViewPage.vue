@@ -4,7 +4,7 @@
         fluid
         class="px-0"
     >
-        <b-form-row>
+        <b-row>
 
             <!-- Transaction details -->
             <b-col>
@@ -160,13 +160,12 @@
             </b-col>
 
             <!-- Receipt pictures -->
-            <b-col md="auto">
-                <template v-if="transaction.receipt_pictures.length > 0">
-                    <transition-group name="list" tag="div">
+            <b-col md="4">
+                <transition-group name="list" tag="div" class="grid mb-3">
+                    <template v-if="transaction.receipt_pictures.length > 0">
                         <div
                             v-for="picture in transaction.receipt_pictures"
                             :key="picture.url"
-                            class="mb-2"
                         >
                             <template v-if="picture.thumbnail">
                                 <a
@@ -198,21 +197,21 @@
                                 </a>
                             </span>
                         </div>
-                    </transition-group>
-                </template>
-                <div
-                    v-if="transaction.can_update"
-                    class="mb-2"
-                >
-                    <add-receipt-picture-button
-                        :size="thumbnailSize"
-                        :transaction-id="transaction.id"
-                        @upload="updatePictures"
-                    />
-                </div>
+                    </template>
+                    <div
+                        v-if="transaction.can_update"
+                        key="add"
+                    >
+                        <add-receipt-picture-button
+                            :size="thumbnailSize"
+                            :transaction-id="transaction.id"
+                            @upload="updatePictures"
+                        />
+                    </div>
+                </transition-group>
             </b-col>
 
-        </b-form-row>
+        </b-row>
     </b-container>
     <p v-else>
         {{ $t('app.loading') }}
@@ -320,10 +319,15 @@ export default {
 
 <style scoped>
 .list-enter-active, .list-leave-active {
-    transition: all 1s;
+    transition: all 0.5s;
 }
 .list-enter, .list-leave-to {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateX(-30px);
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 140px);
+    grid-gap: 1rem;
 }
 </style>
