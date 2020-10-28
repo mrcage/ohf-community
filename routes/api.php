@@ -194,8 +194,13 @@ Route::middleware(['language', 'auth'])
         Route::get('transactions/costCenters', 'MoneyTransactionsController@costCenters')
             ->name('transactions.costCenters');
 
+        Route::get('wallets/{wallet}/nextFreeReceiptNumber', 'MoneyTransactionsController@nextFreeReceiptNumber')
+            ->name('transactions.nextFreeReceiptNumber');
+
         Route::get('wallets/{wallet}/transactions', 'MoneyTransactionsController@index')
             ->name('transactions.index');
+        Route::post('wallets/{wallet}/transactions', 'MoneyTransactionsController@store')
+            ->name('transactions.store');
         Route::get('transactions/{transaction}', 'MoneyTransactionsController@show')
             ->name('transactions.show');
         Route::put('transactions/{transaction}', 'MoneyTransactionsController@update')

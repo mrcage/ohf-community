@@ -459,6 +459,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import transactionsApi from '@/api/accounting/transactions'
 import suppliersApi from '@/api/accounting/suppliers'
 export default {
@@ -467,7 +468,12 @@ export default {
             type: Object,
             required: false
         },
-        disabled: Boolean
+        disabled: Boolean,
+        receiptNo: {
+            required: false,
+            type: Number,
+            default: null
+        }
     },
     data () {
         return {
@@ -486,9 +492,9 @@ export default {
                 supplier_id: this.transaction.supplier_id,
                 remarks: this.transaction.remarks,
             } : {
-                receipt_no: null,
-                date: null,
-                type: null,
+                receipt_no: this.receiptNo,
+                date: moment().format('YYYY-MM-DD'),
+                type: 'spending',
                 amount: null,
                 attendee: null,
                 category: null,

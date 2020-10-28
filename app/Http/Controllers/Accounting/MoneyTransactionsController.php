@@ -148,32 +148,6 @@ class MoneyTransactionsController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Wallet $wallet)
-    {
-        $this->authorize('create', MoneyTransaction::class);
-
-        return view('accounting.transactions.create', [
-            'attendees' => MoneyTransaction::attendees(),
-            'categories' => self::getCategories(),
-            'fixed_categories' => Setting::has('accounting.transactions.categories'),
-            'secondary_categories' => self::useSecondaryCategories() ? self::getSecondaryCategories() : null,
-            'fixed_secondary_categories' => Setting::has('accounting.transactions.secondary_categories'),
-            'projects' => self::getProjects(),
-            'fixed_projects' => Setting::has('accounting.transactions.projects'),
-            'locations' => self::useLocations() ? self::getLocations() : null,
-            'fixed_locations' => Setting::has('accounting.transactions.locations'),
-            'cost_centers' => self::useCostCenters() ? self::getCostCenters() : null,
-            'fixed_cost_centers' => Setting::has('accounting.transactions.cost_centers'),
-            'suppliers' => Supplier::select('id', 'name', 'category')->orderBy('name')->get(),
-            'wallet' => $wallet,
-        ]);
-    }
-
     private static function getCategories(?bool $onlyExisting = false): array
     {
         if (! $onlyExisting && Setting::has('accounting.transactions.categories')) {
@@ -239,6 +213,46 @@ class MoneyTransactionsController extends Controller
         return MoneyTransaction::costCenters();
     }
 
+    private static function showIntermediateBalances(): bool
+    {
+        return Setting::get('accounting.transactions.show_intermediate_balances') ?? false;
+    }
+
+    private static function getIntermediateBalances(Wallet $wallet): array
+    {
+        $transactions = MoneyTransaction::query()
+            ->forWallet($wallet)
+            ->orderBy('receipt_no', 'ASC')
+            ->get();
+
+        $intermediate_balances = [];
+        $intermediate_balance = 0;
+        foreach ($transactions as $transaction) {
+            if ($transaction->type == 'income') {
+                $intermediate_balance += $transaction->amount;
+            } else {
+                $intermediate_balance -= $transaction->amount;
+            }
+            $intermediate_balances[$transaction->id] = $intermediate_balance;
+        }
+
+        return $intermediate_balances;
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create(Wallet $wallet)
+    {
+        $this->authorize('create', MoneyTransaction::class);
+
+        return view('accounting.transactions', [
+            'wallet' => $wallet,
+        ]);
+    }
+
     /**
      * Display the specified resource.
      *
@@ -267,21 +281,6 @@ class MoneyTransactionsController extends Controller
         return view('accounting.transactions', [
             'transaction' => $transaction,
         ]);
-
-        // return view('accounting.transactions.edit', [
-        //     'attendees' => MoneyTransaction::attendees(),
-        //     'categories' => self::getCategories(),
-        //     'fixed_categories' => Setting::has('accounting.transactions.categories'),
-        //     'secondary_categories' => self::useSecondaryCategories() ? self::getSecondaryCategories() : null,
-        //     'fixed_secondary_categories' => Setting::has('accounting.transactions.secondary_categories'),
-        //     'projects' => self::getProjects(),
-        //     'fixed_projects' => Setting::has('accounting.transactions.projects'),
-        //     'locations' => self::useLocations() ? self::getLocations() : null,
-        //     'fixed_locations' => Setting::has('accounting.transactions.locations'),
-        //     'cost_centers' => self::useCostCenters() ? self::getCostCenters() : null,
-        //     'fixed_cost_centers' => Setting::has('accounting.transactions.cost_centers'),
-        //     'suppliers' => Supplier::select('id', 'name', 'category')->orderBy('name')->get(),
-        // ]);
     }
 
     protected function exportAuthorize()
@@ -352,31 +351,5 @@ class MoneyTransactionsController extends Controller
             return new WeblingMoneyTransactionsExport($wallet, $filter);
         }
         return new MoneyTransactionsExport($wallet, $filter);
-    }
-
-    private static function showIntermediateBalances(): bool
-    {
-        return Setting::get('accounting.transactions.show_intermediate_balances') ?? false;
-    }
-
-    private static function getIntermediateBalances(Wallet $wallet): array
-    {
-        $transactions = MoneyTransaction::query()
-            ->forWallet($wallet)
-            ->orderBy('receipt_no', 'ASC')
-            ->get();
-
-        $intermediate_balances = [];
-        $intermediate_balance = 0;
-        foreach ($transactions as $transaction) {
-            if ($transaction->type == 'income') {
-                $intermediate_balance += $transaction->amount;
-            } else {
-                $intermediate_balance -= $transaction->amount;
-            }
-            $intermediate_balances[$transaction->id] = $intermediate_balance;
-        }
-
-        return $intermediate_balances;
     }
 }

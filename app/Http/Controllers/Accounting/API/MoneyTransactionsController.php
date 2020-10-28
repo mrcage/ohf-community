@@ -10,6 +10,7 @@ use App\Models\Accounting\MoneyTransaction;
 use App\Http\Resources\Accounting\MoneyTransaction as MoneyTransactionResource;
 use App\Models\Accounting\Wallet;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -121,11 +122,10 @@ class MoneyTransactionsController extends Controller
 
         $transaction->save();
 
-        return response(null, Response::HTTP_CREATED)
+        return self::showResource($transaction)
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED)
             ->header('Location', route('api.accounting.transactions.show', $transaction));
-        // return redirect()
-        //     ->route($request->submit == 'save_and_continue' ? 'accounting.transactions.create' : 'accounting.transactions.index', $transaction->wallet)
-        //     ->with('info', __('accounting.transaction_registered'));
     }
 
     /**
@@ -135,6 +135,13 @@ class MoneyTransactionsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(MoneyTransaction $transaction)
+    {
+        $this->authorize('view', $transaction);
+
+        return self::showResource($transaction);
+    }
+
+    private static function showResource($transaction): JsonResource
     {
         return new MoneyTransactionResource($transaction
             ->load('supplier')
@@ -186,7 +193,7 @@ class MoneyTransactionsController extends Controller
 
         $transaction->save();
 
-        return response(null, Response::HTTP_NO_CONTENT);
+        return self::showResource($transaction);
     }
 
     /**
@@ -238,7 +245,7 @@ class MoneyTransactionsController extends Controller
         $transaction->controlled_by = $request->user()->id;
         $transaction->save();
 
-        return $this->show($transaction);
+        return self::showResource($transaction);
     }
 
     public function undoControlled(MoneyTransaction $transaction)
@@ -249,7 +256,7 @@ class MoneyTransactionsController extends Controller
         $transaction->controlled_by = null;
         $transaction->save();
 
-        return $this->show($transaction);
+        return self::showResource($transaction);
     }
 
     public function undoBooking(MoneyTransaction $transaction, StoreUndoBooking $request)
@@ -260,7 +267,7 @@ class MoneyTransactionsController extends Controller
         $transaction->external_id = null;
         $transaction->save();
 
-        return $this->show($transaction);
+        return self::showResource($transaction);
     }
 
     public function attendees()
@@ -386,5 +393,12 @@ class MoneyTransactionsController extends Controller
                 ->toArray();
         }
         return MoneyTransaction::costCenters();
+    }
+
+    public function nextFreeReceiptNumber(Wallet $wallet)
+    {
+        return [
+            'data' => $wallet->nextFreeReceiptNumber,
+        ];
     }
 }

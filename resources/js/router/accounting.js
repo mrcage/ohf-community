@@ -13,6 +13,7 @@ import SupplierViewPage from '@/pages/accounting/SupplierViewPage'
 import SupplierDetails from '@/components/accounting/SupplierDetails'
 import SupplierTransactions from '@/components/accounting/SupplierTransactions'
 import SupplierEditPage from '@/pages/accounting/SupplierEditPage'
+import TransactionCreatePage from '@/pages/accounting/TransactionCreatePage'
 import TransactionsIndexPage from '@/pages/accounting/TransactionsIndexPage'
 import TransactionViewPage from '@/pages/accounting/TransactionViewPage'
 import TransactionEditPage from '@/pages/accounting/TransactionEditPage'
@@ -86,6 +87,20 @@ export default new VueRouter({
                 default: true,
                 header: {
                     title: i18n.t('accounting.transactions'),
+                }
+            }
+        },
+        {
+            path: '/wallets/:walletId/transactions/create',
+            name: 'accounting.transactions.create',
+            components: {
+                default: TransactionCreatePage,
+                header: PageHeader
+            },
+            props: {
+                default: true,
+                header: {
+                    title: i18n.t('accounting.register_new_transaction'),
                 }
             }
         },

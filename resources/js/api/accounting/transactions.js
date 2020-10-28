@@ -64,4 +64,8 @@ export default {
         const url = route('api.accounting.transactions.costCenters')
         return await api.get(url)
     },
+    async nextFreeReceiptNumber (walletId) {
+        const url = route('api.accounting.transactions.nextFreeReceiptNumber', walletId)
+        return await api.get(url)
+    },
 }
