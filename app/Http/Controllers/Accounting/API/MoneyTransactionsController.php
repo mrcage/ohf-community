@@ -115,12 +115,6 @@ class MoneyTransactionsController extends Controller
 
         $transaction->wallet()->associate($wallet);
 
-        if (isset($request->receipt_picture) && is_array($request->receipt_picture)) {
-            for ($i = 0; $i < count($request->receipt_picture); $i++) {
-                $transaction->addReceiptPicture($request->file('receipt_picture')[$i]);
-            }
-        }
-
         $transaction->save();
 
         return self::showResource($transaction)
@@ -180,17 +174,6 @@ class MoneyTransactionsController extends Controller
         $transaction->remarks = $request->remarks;
 
         $transaction->supplier()->associate($request->input('supplier_id'));
-
-        if (isset($request->remove_receipt_picture) && is_array($request->remove_receipt_picture)) {
-            foreach ($request->remove_receipt_picture as $picture) {
-                $transaction->deleteReceiptPicture($picture);
-            }
-        }
-        elseif (isset($request->receipt_picture) && is_array($request->receipt_picture)) {
-            for ($i = 0; $i < count($request->receipt_picture); $i++) {
-                $transaction->addReceiptPicture($request->file('receipt_picture')[$i]);
-            }
-        }
 
         $transaction->save();
 
