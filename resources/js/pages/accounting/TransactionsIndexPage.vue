@@ -1,5 +1,32 @@
 <template>
     <div>
+        <p class="d-flex justify-content-between align-items-center">
+            <span>
+                <font-awesome-icon icon="wallet"/>
+                <template v-if="wallet">
+                    {{ wallet.name }}:
+                    <u>{{ wallet.amount | numberFormat }}</u>
+                </template>
+                <template v-else>-</template>
+            </span>
+            <span>
+                <b-button
+                    v-if="filter.length > 0"
+                    variant="primary"
+                    size="sm"
+                >
+                    <font-awesome-icon icon="eraser"/>
+                    {{ $t('app.edit_filter') }}
+                </b-button>
+                <b-button
+                    variant="secondary"
+                    size="sm"
+                >
+                    <font-awesome-icon icon="search"/>
+                    {{ filter.length > 0 ? $t('app.edit_filter') : $t('app.filter_results') }}
+                </b-button>
+            </span>
+        </p>
         <base-table
             ref="table"
             id="wallet-transactons-table"
@@ -37,6 +64,7 @@
 <script>
 import moment from 'moment'
 import numeral from 'numeral'
+import walletApi from '@/api/accounting/wallets'
 import transactionsApi from '@/api/accounting/transactions'
 import BaseTable from '@/components/table/BaseTable'
 import ReceiptPictureIcon from '@/components/accounting/ReceiptPictureIcon'
@@ -52,6 +80,7 @@ export default {
     },
     data () {
         return {
+            wallet: null,
             transactionFields: [
                 {
                     key: 'receipt_pictures',
@@ -123,10 +152,18 @@ export default {
                     formatter: this.dateTimeFormat,
                     class: 'text-right fit'
                 }
-            ]
+            ],
+            filter: []
         }
     },
+    created () {
+        this.fetchWallet()
+    },
     methods: {
+        async fetchWallet () {
+            let data = await walletApi.find(this.walletId)
+            this.wallet = data.data
+        },
         fetchTransactions (ctx) {
             return transactionsApi.list(this.walletId, ctx)
         },
