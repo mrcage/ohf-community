@@ -155,27 +155,29 @@
             <!-- Receipt pictures -->
             <b-col md="auto">
                 <template v-if="transaction.receipt_pictures.length > 0">
-                    <div
-                        v-for="picture in transaction.receipt_pictures"
-                        :key="picture.url"
-                        class="mb-2"
-                    >
-                        <a
-                            v-if="picture.thumbnail"
-                            :href="picture.url"
-                            data-lity
+                    <transition-group name="list" tag="div">
+                        <div
+                            v-for="picture in transaction.receipt_pictures"
+                            :key="picture.url"
+                            class="mb-2"
                         >
-                            <square-thumbnail
-                                :src="picture.thumbnail"
-                                :size="thumbnailSize"
-                            />
-                        </a>
-                        <span v-else>
-                            <a :href="picture.url">
-                                {{ picture.mime_type }} ({{ picture.size }})
+                            <a
+                                v-if="picture.thumbnail"
+                                :href="picture.url"
+                                data-lity
+                            >
+                                <square-thumbnail
+                                    :src="picture.thumbnail"
+                                    :size="thumbnailSize"
+                                />
                             </a>
-                        </span>
-                    </div>
+                            <span v-else>
+                                <a :href="picture.url">
+                                    {{ picture.mime_type }} ({{ picture.size }})
+                                </a>
+                            </span>
+                        </div>
+                    </transition-group>
                 </template>
                 <div
                     v-if="transaction.can_update"
@@ -281,3 +283,13 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.list-enter-active, .list-leave-active {
+    transition: all 1s;
+}
+.list-enter, .list-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+}
+</style>
