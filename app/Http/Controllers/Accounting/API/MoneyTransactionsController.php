@@ -213,7 +213,7 @@ class MoneyTransactionsController extends Controller
         return response(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function updateReceipt(Request $request, MoneyTransaction $transaction)
+    public function addReceipt(Request $request, MoneyTransaction $transaction)
     {
         $this->authorize('update', $transaction);
 
@@ -227,7 +227,6 @@ class MoneyTransactionsController extends Controller
             ],
         ]);
 
-        $transaction->deleteReceiptPictures();
         for ($i = 0; $i < count($request->img); $i++) {
             $transaction->addReceiptPicture($request->file('img')[$i]);
         }

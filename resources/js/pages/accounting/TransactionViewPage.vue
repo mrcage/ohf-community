@@ -185,7 +185,7 @@
                         </template>
                     <!-- </b-form-row> -->
                 </template>
-                <receipt-picture-button
+                <add-receipt-picture-button
                     v-if="transaction.can_update"
                     :size="thumbnailSize"
                     :transaction-id="transaction.id"
@@ -206,12 +206,12 @@ import { showSnackbar } from '@/utils'
 import transactionsApi from '@/api/accounting/transactions'
 import TwoColListGroupItem from '@/components/ui/TwoColListGroupItem'
 import SquareThumbnail from '@/components/ui/SquareThumbnail'
-import ReceiptPictureButton from '@/components/accounting/ReceiptPictureButton'
+import AddReceiptPictureButton from '@/components/accounting/AddReceiptPictureButton'
 export default {
     components: {
         TwoColListGroupItem,
         SquareThumbnail,
-        ReceiptPictureButton
+        AddReceiptPictureButton
     },
     props: {
         id: {

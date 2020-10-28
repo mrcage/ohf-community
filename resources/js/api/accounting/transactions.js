@@ -20,8 +20,8 @@ export default {
         const url = route('api.accounting.transactions.destroy', id)
         return await api.delete(url)
     },
-    async updateReceipt (id, files) {
-        const url = route('api.accounting.transactions.updateReceipt', id)
+    async addReceipt (id, files) {
+        const url = route('api.accounting.transactions.addReceipt', id)
         const data = new FormData()
         for (let i = 0; i < files.length; i ++) {
             data.append('img[]', files[i], files[i].name)

@@ -63,7 +63,7 @@ export default {
             const files = this.$refs.file.files
             this.isBusy = true
             try {
-                let data = await transactionsApi.updateReceipt(this.transactionId, files)
+                let data = await transactionsApi.addReceipt(this.transactionId, files)
                 this.pics = data
             } catch (err) {
                 alert(err)

@@ -150,12 +150,6 @@
         <div style="overflow-x: auto">
             {{ $transactions->appends($filter)->links() }}
         </div>
-        @foreach ($transactions->filter(fn ($e) => $e->receipt_no != null && empty($e->receipt_pictures)) as $transaction)
-            <form action="{{ route('api.accounting.transactions.updateReceipt', $transaction) }}" method="post" enctype="multipart/form-data" class="d-none upload-receipt-form" id="receipt_upload_{{ $transaction->id }}">
-                {{ csrf_field() }}
-                {{ Form::file('img[]', [ 'accept' => 'image/*,application/pdf', 'multiple', 'class' => 'd-none' ]) }}
-            </form>
-        @endforeach
     @else
         @component('components.alert.info')
             @lang('accounting.no_transactions_found')
@@ -165,52 +159,6 @@
 
 @section('script')
     $(function () {
-        $('.receipt-picture-missing').on('click', function () {
-            var tr_id = $(this).data('transaction-id');
-            $('#receipt_upload_' + tr_id).find('input[type=file]').click();
-        });
-        $('.upload-receipt-form input[type="file"]').on('change', function () {
-            $(this).parents('form').submit();
-        });
-        $('.upload-receipt-form').on('submit', function (e) {
-            e.preventDefault();
-            var tr_id = $(this).attr('id').substr('#receipt_upload_'.length - 1);
-            var td = $('.receipt-picture-missing[data-transaction-id="' + tr_id + '"]');
-            td.removeClass('table-warning')
-                .addClass('table-info')
-                .off('click');
-            $.ajax({
-                url: $(this).attr('action'),
-                type: "POST",
-                data:  new FormData(this),
-                contentType: false,
-                cache: false,
-                processData:false,
-                success: function () {
-                    td.removeClass('table-info receipt-picture-missing')
-                        .addClass('text-success');
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    td.removeClass('table-info').addClass('table-warning');
-                    var message;
-                    if (jqXHR.responseJSON.message) {
-                        if (jqXHR.responseJSON.errors) {
-                            message = "";
-                            var errors = jqXHR.responseJSON.errors;
-                            Object.keys(errors).forEach(function (key) {
-                                message += errors[key] + "\n";
-                            });
-                        } else {
-                            message = jqXHR.responseJSON.message;
-                        }
-                    } else {
-                        message = textStatus + ': ' + jqXHR.responseText;
-                    }
-                    alert(message);
-                }
-            });
-        });
-
         $('.details-link').on('click', function (e) {
             e.preventDefault();
             var container = $('#detailsModal');
