@@ -155,42 +155,38 @@
             <!-- Receipt pictures -->
             <b-col md="auto">
                 <template v-if="transaction.receipt_pictures.length > 0">
-                    <!-- <b-form-row class="mx-3 mb-2"> -->
-                        <template v-for="picture in transaction.receipt_pictures">
-                            <!-- <b-col cols="auto"
-                                :key="picture.url"
-                                class="mb-2"
-                            > -->
-                            <div
-                                :key="picture.url"
-                                class="mb-2"
-                            >
-                                <a
-                                    v-if="picture.thumbnail"
-                                    :href="picture.url"
-                                    data-lity
-                                >
-                                    <square-thumbnail
-                                        :src="picture.thumbnail"
-                                        :size="thumbnailSize"
-                                    />
-                                </a>
-                                <span v-else>
-                                    <a :href="picture.url">
-                                        {{ picture.mime_type }} ({{ picture.size }})
-                                    </a>
-                                </span>
-                            </div>
-                            <!-- </b-col> -->
-                        </template>
-                    <!-- </b-form-row> -->
+                    <div
+                        v-for="picture in transaction.receipt_pictures"
+                        :key="picture.url"
+                        class="mb-2"
+                    >
+                        <a
+                            v-if="picture.thumbnail"
+                            :href="picture.url"
+                            data-lity
+                        >
+                            <square-thumbnail
+                                :src="picture.thumbnail"
+                                :size="thumbnailSize"
+                            />
+                        </a>
+                        <span v-else>
+                            <a :href="picture.url">
+                                {{ picture.mime_type }} ({{ picture.size }})
+                            </a>
+                        </span>
+                    </div>
                 </template>
-                <add-receipt-picture-button
+                <div
                     v-if="transaction.can_update"
-                    :size="thumbnailSize"
-                    :transaction-id="transaction.id"
-                    @upload="updatePictures"
-                />
+                    class="mb-2"
+                >
+                    <add-receipt-picture-button
+                        :size="thumbnailSize"
+                        :transaction-id="transaction.id"
+                        @upload="updatePictures"
+                    />
+                </div>
             </b-col>
 
         </b-form-row>
