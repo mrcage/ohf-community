@@ -233,8 +233,7 @@ class MoneyTransactionsController extends Controller
         }
         $transaction->save();
 
-        return collect($transaction->receipt_pictures)
-            ->map(fn ($f) => Storage::url($f));
+        return response()->json($transaction->getReceiptPictureDetails());
     }
 
     public function markControlled(StoreControlled $request, MoneyTransaction $transaction)

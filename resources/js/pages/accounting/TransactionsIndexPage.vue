@@ -12,8 +12,9 @@
         >
             <template v-slot:cell(receipt_pictures)="data">
                 <receipt-picture-icon
-                    :transacionId="data.item.id"
+                    :transaction-id="data.item.id"
                     :pictures="data.value"
+                    :allow-upload="data.item.can_update"
                 />
             </template>
             <template v-slot:cell(receipt_no)="data">

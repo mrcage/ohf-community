@@ -258,6 +258,32 @@ class MoneyTransaction extends Model implements Auditable
         $this->receipt_pictures = [];
     }
 
+    public function getReceiptPictureDetails()
+    {
+        return collect($this->receipt_pictures)
+            ->filter(fn ($f) => Storage::exists($f))
+            ->map(fn ($f) => [
+                'url' => Storage::url($f),
+                'thumbnail' => self::thumbnailUrl($f),
+                'mime_type' => Storage::mimeType($f),
+                'size' => bytes_to_human(Storage::size($f))
+            ]);
+    }
+
+    private static function thumbnailUrl(string $file): ?string
+    {
+        if (Str::startsWith(Storage::mimeType($file), 'image/')) {
+            if (Storage::exists(thumb_path($file))) {
+                return Storage::url(thumb_path($file));
+            }
+            return Storage::url($file);
+        }
+        if (Storage::exists(thumb_path($file, 'jpeg'))) {
+            return Storage::url(thumb_path($file, 'jpeg'));
+        }
+        return null;
+    }
+
     public static function attendees(): array
     {
         return self::select('attendee')

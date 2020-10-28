@@ -18,14 +18,7 @@ class MoneyTransaction extends JsonResource
     {
         $data = parent::toArray($request);
 
-        $data['receipt_pictures'] = collect($this->receipt_pictures)
-            ->filter(fn ($f) => Storage::exists($f))
-            ->map(fn ($f) => [
-                'url' => Storage::url($f),
-                'thumbnail' => self::thumbnailUrl($f),
-                'mime_type' => Storage::mimeType($f),
-                'size' => bytes_to_human(Storage::size($f))
-            ]);
+        $data['receipt_pictures'] = $this->resource->getReceiptPictureDetails();
         $data['supplier'] = $this->whenLoaded('supplier', fn () =>
             collect($this->supplier)->only(['slug', 'name', 'category'])
         );
@@ -51,19 +44,5 @@ class MoneyTransaction extends JsonResource
         // }
 
         return $data;
-    }
-
-    private static function thumbnailUrl(string $file): ?string
-    {
-        if (Str::startsWith(Storage::mimeType($file), 'image/')) {
-            if (Storage::exists(thumb_path($file))) {
-                return Storage::url(thumb_path($file));
-            }
-            return Storage::url($file);
-        }
-        if (Storage::exists(thumb_path($file, 'jpeg'))) {
-            return Storage::url(thumb_path($file, 'jpeg'));
-        }
-        return null;
     }
 }

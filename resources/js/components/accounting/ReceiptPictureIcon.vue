@@ -5,13 +5,13 @@
         spin
     />
     <a
-        v-else-if="urls.length > 0"
-        :href="urls[0]"
+        v-else-if="pics.length > 0"
+        :href="pics[0].url"
         data-lity
     >
         <font-awesome-icon :icon="icon"/>
     </a>
-    <span v-else>
+    <span v-else-if="allowUpload">
         <a
             href="#"
             class="text-warning"
@@ -28,30 +28,34 @@
             @change="doUpload"
         />
     </span>
+    <span v-else class="text-muted">
+        <font-awesome-icon icon="camera"/>
+    </span>
 </template>
 
 <script>
 import transactionsApi from '@/api/accounting/transactions'
 export default {
     props: {
-        transacionId: {
+        transactionId: {
             required: true
         },
         pictures: {
             required: false,
             type: Array,
             default: () => []
-        }
+        },
+        allowUpload: Boolean
     },
     data () {
         return {
             isBusy: false,
-            urls: this.pictures.map(e => e.url)
+            pics: this.pictures
         }
     },
     computed: {
         icon () {
-            return this.urls.length > 1 ? 'images' : 'image'
+            return this.pics.length > 1 ? 'images' : 'image'
         }
     },
     methods: {
@@ -59,8 +63,8 @@ export default {
             const files = this.$refs.file.files
             this.isBusy = true
             try {
-                let data = await transactionsApi.updateReceipt(this.transacionId, files)
-                this.urls = data
+                let data = await transactionsApi.updateReceipt(this.transactionId, files)
+                this.pics = data
             } catch (err) {
                 alert(err)
             }

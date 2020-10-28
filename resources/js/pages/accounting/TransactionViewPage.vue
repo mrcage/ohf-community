@@ -5,6 +5,8 @@
         class="px-0"
     >
         <b-form-row>
+
+            <!-- Transaction details -->
             <b-col>
                 <b-list-group class="mb-3">
                     <two-col-list-group-item :title="$t('accounting.receipt')">
@@ -148,12 +150,18 @@
                         </template>
                     </two-col-list-group-item>
                 </b-list-group>
-                </b-col>
-                <b-col md="auto">
+            </b-col>
+
+            <!-- Receipt pictures -->
+            <b-col md="auto">
                 <template v-if="transaction.receipt_pictures.length > 0">
-                    <b-form-row class="mx-3 mb-2">
+                    <!-- <b-form-row class="mx-3 mb-2"> -->
                         <template v-for="picture in transaction.receipt_pictures">
-                            <b-col cols="auto"
+                            <!-- <b-col cols="auto"
+                                :key="picture.url"
+                                class="mb-2"
+                            > -->
+                            <div
                                 :key="picture.url"
                                 class="mb-2"
                             >
@@ -172,11 +180,19 @@
                                         {{ picture.mime_type }} ({{ picture.size }})
                                     </a>
                                 </span>
-                            </b-col>
+                            </div>
+                            <!-- </b-col> -->
                         </template>
-                    </b-form-row>
+                    <!-- </b-form-row> -->
                 </template>
+                <receipt-picture-button
+                    v-if="transaction.can_update"
+                    :size="thumbnailSize"
+                    :transaction-id="transaction.id"
+                    @upload="updatePictures"
+                />
             </b-col>
+
         </b-form-row>
     </b-container>
     <p v-else>
@@ -190,10 +206,12 @@ import { showSnackbar } from '@/utils'
 import transactionsApi from '@/api/accounting/transactions'
 import TwoColListGroupItem from '@/components/ui/TwoColListGroupItem'
 import SquareThumbnail from '@/components/ui/SquareThumbnail'
+import ReceiptPictureButton from '@/components/accounting/ReceiptPictureButton'
 export default {
     components: {
         TwoColListGroupItem,
-        SquareThumbnail
+        SquareThumbnail,
+        ReceiptPictureButton
     },
     props: {
         id: {
@@ -259,6 +277,10 @@ export default {
                 alert(err)
             }
             this.isBusy = false
+        },
+        async updatePictures (pictures) {
+            this.transaction.receipt_pictures = pictures
+            showSnackbar(this.$t('accounting.transaction_updated'))
         }
     }
 }
