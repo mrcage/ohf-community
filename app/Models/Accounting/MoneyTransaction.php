@@ -232,6 +232,17 @@ class MoneyTransaction extends Model implements Auditable
         $image->save($thumbPath);
     }
 
+    public function deleteReceiptPictureByUrl(string $pictureUrl)
+    {
+        if (isset($this->receipt_pictures) && is_array($this->receipt_pictures)) {
+            collect($this->receipt_pictures)
+                ->filter(fn ($picture) => Storage::url($picture) == $pictureUrl)
+                ->each(function ($picture) {
+                    $this->deleteReceiptPicture($picture);
+                });
+        }
+    }
+
     public function deleteReceiptPicture(string $picture)
     {
         Storage::delete($picture);

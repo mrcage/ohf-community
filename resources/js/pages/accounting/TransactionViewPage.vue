@@ -87,6 +87,8 @@
                     <two-col-list-group-item :title="$t('app.last_updated')">
                         {{ transaction.updated_at | dateTimeFormat }}
                     </two-col-list-group-item>
+
+                    <!-- Controlled -->
                     <two-col-list-group-item :title="$t('accounting.controlled')">
                         <template v-if="transaction.controlled_at">
                             {{ transaction.controlled_at | dateTimeFormat }}
@@ -103,7 +105,7 @@
                                 </b-button>
                             </template>
                         </template>
-                        <template v-else>
+                        <template v-else-if="transaction.can_update">
                             <b-button
                                 variant="primary"
                                 size="sm"
@@ -113,7 +115,12 @@
                                 {{ $t('accounting.mark_controlled') }}
                             </b-button>
                         </template>
+                        <template v-else>
+                            {{ $t('app.no') }}
+                        </template>
                     </two-col-list-group-item>
+
+                    <!-- Booked -->
                     <two-col-list-group-item
                         v-if="transaction.booked"
                         :title="$t('accounting.booked')"
@@ -161,16 +168,30 @@
                             :key="picture.url"
                             class="mb-2"
                         >
-                            <a
-                                v-if="picture.thumbnail"
-                                :href="picture.url"
-                                data-lity
-                            >
-                                <square-thumbnail
-                                    :src="picture.thumbnail"
-                                    :size="thumbnailSize"
-                                />
-                            </a>
+                            <template v-if="picture.thumbnail">
+                                <a
+                                    :href="picture.url"
+                                    data-lity
+                                    style="position: relative"
+                                >
+                                    <square-thumbnail
+                                        :src="picture.thumbnail"
+                                        :size="thumbnailSize"
+                                    />
+                                </a>
+                                <b-button
+                                    v-if="transaction.can_update"
+                                    variant="warning"
+                                    block
+                                    size="sm"
+                                    :style="{ width: thumbnailSize + 'px' }"
+                                    :disabled="isBusy"
+                                    @click="removePicture(picture.url)"
+                                >
+                                    <font-awesome-icon icon="trash"/>
+                                    {{ $t('app.remove') }}
+                                </b-button>
+                            </template>
                             <span v-else>
                                 <a :href="picture.url">
                                     {{ picture.mime_type }} ({{ picture.size }})
@@ -279,6 +300,19 @@ export default {
         async updatePictures (pictures) {
             this.transaction.receipt_pictures = pictures
             showSnackbar(this.$t('accounting.transaction_updated'))
+        },
+        async removePicture (pictureUrl) {
+            if (confirm(this.$t('app.really_remove_this_picture'))) {
+                this.isBusy = true
+                try {
+                    let data = await transactionsApi.deleteReceipt(this.id, pictureUrl)
+                    this.transaction.receipt_pictures = data
+                    showSnackbar(this.$t('accounting.transaction_updated'))
+                } catch (err) {
+                    alert(err)
+                }
+                this.isBusy = false
+            }
         }
     }
 }

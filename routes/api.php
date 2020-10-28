@@ -210,6 +210,8 @@ Route::middleware(['language', 'auth'])
 
         Route::post('transactions/{transaction}/receipt', 'MoneyTransactionsController@addReceipt')
             ->name('transactions.addReceipt');
+        Route::delete('transactions/{transaction}/receipt', 'MoneyTransactionsController@deleteReceipt')
+            ->name('transactions.deleteReceipt');
 
         Route::post('transactions/{transaction}/controlled', 'MoneyTransactionsController@markControlled')
             ->name('transactions.markControlled');

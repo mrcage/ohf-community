@@ -12,6 +12,7 @@ use App\Models\Accounting\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Setting;
@@ -230,6 +231,22 @@ class MoneyTransactionsController extends Controller
         for ($i = 0; $i < count($request->img); $i++) {
             $transaction->addReceiptPicture($request->file('img')[$i]);
         }
+        $transaction->save();
+
+        return response()->json($transaction->getReceiptPictureDetails());
+    }
+
+    public function deleteReceipt(Request $request, MoneyTransaction $transaction)
+    {
+        $this->authorize('update', $transaction);
+
+        $request->validate([
+            'url' => [
+                'required',
+            ],
+        ]);
+
+        $transaction->deleteReceiptPictureByUrl($request->url);
         $transaction->save();
 
         return response()->json($transaction->getReceiptPictureDetails());

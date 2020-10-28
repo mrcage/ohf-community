@@ -2,15 +2,16 @@
     <span>
         <b-button
             variant="secondary"
-            size="lg"
             :style="{ width: size + 'px', height: size + 'px' }"
             :disabled="isBusy"
             @click.prevent="$refs.file.click()"
         >
-            <font-awesome-icon
+            <big><font-awesome-icon
                 :icon="isBusy ? 'spinner' : 'plus-circle'"
                 :spin="isBusy"
             />
+            </big>
+            <br>{{ $t('accounting.add_picture_of_receipt') }}
         </b-button>
         <input
             ref="file"

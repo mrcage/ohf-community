@@ -339,6 +339,7 @@ return [
     'no_cards_registered' => 'Keine Karten registriert.',
     'revoked' => 'Zurückgezogen',
     'picture' => 'Bild',
+    'really_remove_this_picture' => 'Dieses Bild wirklich löschen?',
     'available' => 'Verfügbar',
     'loading' => 'Wird geladen...',
     'searching' => 'Wird gesucht...',

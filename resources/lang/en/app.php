@@ -341,6 +341,7 @@ return [
     'no_cards_registered' => 'No cards registered.',
     'revoked' => 'Revoked',
     'picture' => 'Picture',
+    'really_remove_this_picture' => 'Really remove this picture?',
     'available' => 'Available',
     'loading' => 'Loading...',
     'searching' => 'Searching...',

@@ -78,9 +78,9 @@ export const api = {
             handleError(err)
         }
     },
-    async delete (url) {
+    async delete (url, data = undefined) {
         try {
-            const res = await axios.delete(url)
+            const res = await axios.delete(url, data ? { data: data } : {})
             return res.data
         } catch (err) {
             handleError(err)

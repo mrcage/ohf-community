@@ -28,6 +28,12 @@ export default {
         }
         return await api.postFormData(url, data)
     },
+    async deleteReceipt (id, pictureUrl) {
+        const url = route('api.accounting.transactions.deleteReceipt', id)
+        return await api.delete(url, {
+            url: pictureUrl
+        })
+    },
     async markControlled (id) {
         const url = route('api.accounting.transactions.markControlled', id)
         return await api.post(url)
