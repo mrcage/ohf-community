@@ -12,8 +12,6 @@ use App\Models\Accounting\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Setting;
 
@@ -32,6 +30,11 @@ class MoneyTransactionsController extends Controller
         $request->validate([
             'filter' => [
                 'nullable',
+                'array'
+            ],
+            'search' => [
+                'nullable',
+                'string'
             ],
             'page' => [
                 'nullable',
@@ -70,12 +73,14 @@ class MoneyTransactionsController extends Controller
         $sortBy = $request->input('sortBy', 'created_at');
         $sortDirection = $request->input('sortDirection', 'desc');
         $pageSize = $request->input('pageSize', 25);
-        $filter = trim($request->input('filter', ''));
+        $filter = $request->input('filter', []);
+        $search = trim($request->input('search', ''));
 
         return MoneyTransactionResource::collection($wallet->transactions()
             ->with('supplier')
             ->orderBy($sortBy, $sortDirection)
             ->forFilter($filter)
+            ->forFilter($search)
             ->paginate($pageSize));
     }
 

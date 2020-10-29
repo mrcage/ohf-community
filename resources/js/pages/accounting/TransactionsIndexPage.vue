@@ -142,6 +142,11 @@ export default {
             filter: {}
         }
     },
+    watch: {
+        filter () {
+            this.$refs.table.refresh()
+        }
+    },
     created () {
         this.fetchWallet()
     },
@@ -151,7 +156,10 @@ export default {
             this.wallet = data.data
         },
         fetchTransactions (ctx) {
-            return transactionsApi.list(this.walletId, ctx)
+            const context = { ...ctx }
+            context.search = context.filter
+            context.filter = this.filter
+            return transactionsApi.list(this.walletId, context)
         },
         dateFormat (value) {
             return moment(value).format('LL')

@@ -17,13 +17,13 @@
             <font-awesome-icon icon="search"/>
             {{ hasFilter ? $t('app.edit_filter') : $t('app.filter_results') }}
         </b-button>
-        {{ filter }}
         <b-modal
             id="filter-modal"
             :title="$t('app.filter')"
             ok-only
             :ok-title="$t('app.apply')"
             body-class="pb-0"
+            @show="initForm"
             @ok="handleOk"
         >
             <b-form ref="form" @submit.stop.prevent="handleSubmit">
@@ -201,23 +201,7 @@ export default {
     },
     data () {
         return {
-            form: {
-                type: this.value.type,
-                controlled: this.value.controlled,
-                receipt_no: this.value.receipt_no,
-                date_start: this.value.date_start,
-                date_end: this.value.date_end,
-                category: this.value.category,
-                secondary_category: this.value.secondary_category,
-                project: this.value.project,
-                location: this.value.location,
-                cost_center: this.value.cost_center,
-                attendee: this.value.attendee,
-                description: this.value.description,
-                supplier: this.value.supplier,
-                today: this.value.today,
-                no_receipt: this.value.no_receipt,
-            },
+            form: {},
             types: [
                 { value: 'income', text: this.$t('accounting.income')},
                 { value: 'spending', text: this.$t('accounting.spending')},
@@ -275,47 +259,67 @@ export default {
         this.fetchSuppliers()
     },
     methods: {
-        async fetchCategories() {
+        initForm () {
+            const filter = this.filter
+            this.form = {
+                type: filter.type,
+                controlled: filter.controlled,
+                receipt_no: filter.receipt_no,
+                date_start: filter.date_start,
+                date_end: filter.date_end,
+                category: filter.category,
+                secondary_category: filter.secondary_category,
+                project: filter.project,
+                location: filter.location,
+                cost_center: filter.cost_center,
+                attendee: filter.attendee,
+                description: filter.description,
+                supplier: filter.supplier,
+                today: filter.today,
+                no_receipt: filter.no_receipt,
+            }
+        },
+        async fetchCategories () {
             let data = await transactionsApi.categories()
             this.categories = data.data
             this.fixedCategories = data.meta.fixed
         },
-        async fetchSecondaryCategories() {
+        async fetchSecondaryCategories () {
             let data = await transactionsApi.secondaryCategories()
             this.secondaryCategories = data.data
             this.fixedSecondaryCategories = data.meta.fixed
             this.secondaryCategoriesEnabled = data.meta.enabled
         },
-        async fetchProjects() {
+        async fetchProjects () {
             let data = await transactionsApi.projects()
             this.projects = data.data
             this.fixedProjects = data.meta.fixed
         },
-        async fetchLocations() {
+        async fetchLocations () {
             let data = await transactionsApi.locations()
             this.locations = data.data
             this.fixedLocations = data.meta.fixed
             this.locationsEnabled = data.meta.enabled
         },
-        async fetchCostCenters() {
+        async fetchCostCenters () {
             let data = await transactionsApi.costCenters()
             this.costCenters = data.data
             this.fixedCostCenters = data.meta.fixed
             this.costCentersEnabled = data.meta.enabled
         },
-        async fetchAttendees() {
+        async fetchAttendees () {
             let data = await transactionsApi.attendees()
             this.attendees = data.data
         },
-        async fetchSuppliers() {
+        async fetchSuppliers () {
             let data = await suppliersApi.list({ mode: 'selectlist' })
             this.suppliers = data.data.map(e => e.name)
         },
-        handleOk(bvModalEvt) {
+        handleOk (bvModalEvt) {
             bvModalEvt.preventDefault()
             this.handleSubmit()
         },
-        handleSubmit() {
+        handleSubmit () {
             this.applyFilter()
             this.$nextTick(() => this.$bvModal.hide('filter-modal'))
         },
