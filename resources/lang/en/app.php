@@ -98,6 +98,7 @@ return [
     'message' => 'Message',
     'no_log_entries_found' => 'No log entries found.',
     'filter' => 'Filter',
+    'apply' => 'Apply',
     'apply_filter' => 'Apply filter',
     'reset_filter' => 'Reset filter',
     'search_message_text' => 'Search message text',

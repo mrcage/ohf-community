@@ -96,6 +96,7 @@ return [
     'message' => 'Nachricht',
     'no_log_entries_found' => 'Keine Logeinträge gefunden.',
     'filter' => 'Filter',
+    'apply' => 'Anwenden',
     'apply_filter' => 'Filter anwenden',
     'reset_filter' => 'Filter zurücksetzen',
     'search_message_text' => 'Nachrichtentext durchsuchen',

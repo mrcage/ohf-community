@@ -290,6 +290,7 @@ class MoneyTransactionsController extends Controller
         if (! $onlyExisting && Setting::has('accounting.transactions.categories')) {
             return collect(Setting::get('accounting.transactions.categories'))
                 ->sort()
+                ->values()
                 ->toArray();
         }
         return MoneyTransaction::categories();
@@ -316,6 +317,7 @@ class MoneyTransactionsController extends Controller
         if (! $onlyExisting && Setting::has('accounting.transactions.secondary_categories')) {
             return collect(Setting::get('accounting.transactions.secondary_categories'))
                 ->sort()
+                ->values()
                 ->toArray();
         }
         return MoneyTransaction::secondaryCategories();
@@ -336,6 +338,7 @@ class MoneyTransactionsController extends Controller
         if (! $onlyExisting && Setting::has('accounting.transactions.projects')) {
             return collect(Setting::get('accounting.transactions.projects'))
                 ->sort()
+                ->values()
                 ->toArray();
         }
         return MoneyTransaction::projects();
@@ -362,6 +365,7 @@ class MoneyTransactionsController extends Controller
         if (! $onlyExisting && Setting::has('accounting.transactions.locations')) {
             return collect(Setting::get('accounting.transactions.locations'))
                 ->sort()
+                ->values()
                 ->toArray();
         }
         return MoneyTransaction::locations();
@@ -388,6 +392,7 @@ class MoneyTransactionsController extends Controller
         if (! $onlyExisting && Setting::has('accounting.transactions.cost_centers')) {
             return collect(Setting::get('accounting.transactions.cost_centers'))
                 ->sort()
+                ->values()
                 ->toArray();
         }
         return MoneyTransaction::costCenters();

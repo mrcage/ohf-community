@@ -158,7 +158,6 @@
                                 v-if="fixedCategories"
                                 v-model="form.category"
                                 :options="categories"
-                                :placeholder="`- ${$t('app.category')} -`"
                                 :state="getValidationState(validationContext)"
                             />
                             <b-form-input
@@ -201,8 +200,7 @@
                             <b-form-select
                                 v-if="fixedSecondaryCategories"
                                 v-model="form.secondary_category"
-                                :options="secondaryCategories"
-                                :placeholder="`- ${$t('app.secondary_category')} -`"
+                                :options="[''].concat(secondaryCategories)"
                                 :state="getValidationState(validationContext)"
                             />
                             <b-form-input
@@ -237,8 +235,7 @@
                             <b-form-select
                                 v-if="fixedProjects"
                                 v-model="form.project"
-                                :options="projects"
-                                :placeholder="`- ${$t('app.project')} -`"
+                                :options="[''].concat(projects)"
                                 :state="getValidationState(validationContext)"
                             />
                             <b-form-input
@@ -280,8 +277,7 @@
                             <b-form-select
                                 v-if="fixedLocations"
                                 v-model="form.location"
-                                :options="locations"
-                                :placeholder="`- ${$t('app.location')} -`"
+                                :options="[''].concat(locations)"
                                 :state="getValidationState(validationContext)"
                             />
                             <b-form-input
@@ -319,8 +315,7 @@
                             <b-form-select
                                 v-if="fixedCostCenters"
                                 v-model="form.cost_center"
-                                :options="costCenters"
-                                :placeholder="`- ${$t('accounting.cost_center')} -`"
+                                :options="[''].concat(costCenters)"
                                 :state="getValidationState(validationContext)"
                             />
                             <b-form-input

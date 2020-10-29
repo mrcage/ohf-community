@@ -9,23 +9,7 @@
                 </template>
                 <template v-else>-</template>
             </span>
-            <span>
-                <b-button
-                    v-if="filter.length > 0"
-                    variant="primary"
-                    size="sm"
-                >
-                    <font-awesome-icon icon="eraser"/>
-                    {{ $t('app.edit_filter') }}
-                </b-button>
-                <b-button
-                    variant="secondary"
-                    size="sm"
-                >
-                    <font-awesome-icon icon="search"/>
-                    {{ filter.length > 0 ? $t('app.edit_filter') : $t('app.filter_results') }}
-                </b-button>
-            </span>
+            <transaction-filter v-model="filter"/>
         </p>
         <base-table
             ref="table"
@@ -68,10 +52,12 @@ import walletApi from '@/api/accounting/wallets'
 import transactionsApi from '@/api/accounting/transactions'
 import BaseTable from '@/components/table/BaseTable'
 import ReceiptPictureIcon from '@/components/accounting/ReceiptPictureIcon'
+import TransactionFilter from '@/components/accounting/TransactionFilter'
 export default {
     components: {
         BaseTable,
-        ReceiptPictureIcon
+        ReceiptPictureIcon,
+        TransactionFilter
     },
     props: {
         walletId: {
@@ -153,7 +139,7 @@ export default {
                     class: 'text-right fit'
                 }
             ],
-            filter: []
+            filter: {}
         }
     },
     created () {

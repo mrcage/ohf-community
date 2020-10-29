@@ -245,16 +245,6 @@
                     {{ Form::bsCheckbox('filter[no_receipt]', 1, $filter['no_receipt'] ?? false, __('accounting.no_receipt')) }}
                 </div>
             </div>
-            <hr>
-            <div class="form-row">
-                <div class="col-sm-auto">
-                    {{ Form::bsSelect('sortColumn', $sortColumns, $sortColumn, [], __('app.order_by')) }}
-                </div>
-                <div class="col-sm-auto mb-3">
-                    {{ Form::bsRadioList('sortOrder', [ 'asc' => __('app.ascending'), 'desc' => __('app.descending') ], $sortOrder, __('app.order')) }}
-                </div>
-            </div>
-
             @slot('footer')
                 @if(count($filter) > 0)
                     <a href="{{ route('accounting.transactions.index', $wallet) }}?reset_filter=1" class="btn btn-secondary" tabindex="-1">@icon(eraser) @lang('app.reset_filter')</a>
