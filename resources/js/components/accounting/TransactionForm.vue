@@ -112,6 +112,32 @@
                     </validation-provider>
                 </b-col>
 
+                <!-- Fees -->
+                <b-col sm>
+                    <validation-provider
+                        :name="$t('accounting.fees')"
+                        vid="fees"
+                        :rules="{ }"
+                        v-slot="validationContext"
+                    >
+                        <b-form-group
+                            :label="$t('accounting.fees')"
+                            :state="getValidationState(validationContext)"
+                            :invalid-feedback="validationContext.errors[0]"
+                            :description="$t('app.write_decimal_point_as_comma')"
+                        >
+                            <b-form-input
+                                v-model="form.fees"
+                                autocomplete="off"
+                                type="number"
+                                min="0"
+                                step="any"
+                                :state="getValidationState(validationContext)"
+                            />
+                        </b-form-group>
+                    </validation-provider>
+                </b-col>
+
             </b-form-row>
 
             <b-form-row>

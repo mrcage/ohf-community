@@ -90,7 +90,9 @@ export default {
             "tax_number": "Steuernummer",
             "tax_office": "Steuerbüro",
             "bank": "Bank",
-            "iban": "IBAN"
+            "iban": "IBAN",
+            "fees": "Gebühren",
+            "transaction_fees": "Transaktionsgebühren"
         },
         "app": {
             "validation_failed": "Validierung fehlgeschlagen, es wurden ungültige Werte eingegeben!",
@@ -1317,7 +1319,9 @@ export default {
             "tax_number": "Tax number",
             "tax_office": "Tax office",
             "bank": "Bank",
-            "iban": "IBAN"
+            "iban": "IBAN",
+            "fees": "Fees",
+            "transaction_fees": "Transaction fees"
         },
         "app": {
             "validation_failed": "Validation failed, you have entered invalid values!",

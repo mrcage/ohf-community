@@ -9966,6 +9966,7 @@ h3 {
   align-items: center;
   justify-content: center;
   vertical-align: middle;
+  flex-shrink: 0;
   width: 2.5rem;
   height: 2.5rem;
   font-size: inherit;
@@ -10040,7 +10041,7 @@ h3 {
   border-radius: 10em;
   font-size: 70%;
   font-weight: 700;
-  z-index: 5;
+  z-index: 1;
 }
 
 .b-avatar-sm {
@@ -10074,7 +10075,7 @@ h3 {
 }
 .b-avatar-group a.b-avatar:hover:not(.disabled):not(disabled),
 .b-avatar-group .btn.b-avatar:hover:not(.disabled):not(disabled) {
-  z-index: 3;
+  z-index: 1;
 }
 
 .b-calendar {
@@ -10723,6 +10724,16 @@ input[type=color].form-control:disabled {
   line-height: 1.5;
 }
 
+.media-aside {
+  display: flex;
+  margin-right: 1rem;
+}
+
+.media-aside-right {
+  margin-right: 0;
+  margin-left: 1rem;
+}
+
 .modal-backdrop {
   opacity: 0.5;
 }
@@ -11077,6 +11088,8 @@ input[type=color].form-control:disabled {
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.12);
   cursor: wait;
+  -webkit-mask-image: radial-gradient(white, black);
+          mask-image: radial-gradient(white, black);
 }
 .b-skeleton::before {
   content: "\A0";
@@ -18867,9 +18880,6 @@ readers do not read off random characters that represent icons */
   width: 0;
   margin: 5px 0;
 }
-.tagify[readonly]:not(.tagify--mix) .tagify__tag__removeBtn {
-  display: none;
-}
 .tagify[readonly]:not(.tagify--mix) .tagify__tag > div {
   padding: 0.3em 0.5em;
   padding: var(--tag-pad);
@@ -18878,6 +18888,9 @@ readers do not read off random characters that represent icons */
   background: linear-gradient(45deg, var(--tag-bg) 25%, transparent 25%, transparent 50%, var(--tag-bg) 50%, var(--tag-bg) 75%, transparent 75%, transparent) 0/5px 5px;
   box-shadow: none;
   filter: brightness(0.95);
+}
+.tagify[readonly] .tagify__tag__removeBtn {
+  display: none;
 }
 .tagify--loading .tagify__input::before {
   content: none;

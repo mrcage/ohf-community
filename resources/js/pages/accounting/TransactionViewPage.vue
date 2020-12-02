@@ -22,6 +22,14 @@
                             {{ transaction.amount | numberFormat }}
                         </span>
                     </two-col-list-group-item>
+                    <two-col-list-group-item
+                        v-if="transaction.fees"
+                        :title="$t('accounting.fees')"
+                    >
+                        <span class="text-danger">
+                            {{ transaction.fees | numberFormat }}
+                        </span>
+                    </two-col-list-group-item>
                     <two-col-list-group-item :title="$t('app.category')">
                         {{ transaction.category }}
                     </two-col-list-group-item>

@@ -91,4 +91,6 @@ return [
     'tax_office' => 'Steuerbüro',
     'bank' => 'Bank',
     'iban' => 'IBAN',
+    'fees' => 'Gebühren',
+    'transaction_fees' => 'Transaktionsgebühren',
 ];
