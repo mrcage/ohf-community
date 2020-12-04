@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.28.0
+
+* Updated to Laravel 8
+
+## 2.27.0
+
+* Added comments function to community volunteers
+
 ## 2.26.0
 
 * Added fees to money transaction

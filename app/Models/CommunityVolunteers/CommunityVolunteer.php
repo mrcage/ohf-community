@@ -2,10 +2,12 @@
 
 namespace App\Models\CommunityVolunteers;
 
+use App\Models\Traits\CommentsRelation;
 use Carbon\Carbon;
 use Exception;
-use Iatstuti\Database\Support\NullableFields;
+use Dyrynda\Database\Support\NullableFields;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -13,8 +15,10 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 class CommunityVolunteer extends Model implements Auditable
 {
+    use HasFactory;
     use NullableFields;
     use \OwenIt\Auditing\Auditable;
+    use CommentsRelation;
 
     protected $table = 'community_volunteers';
 
@@ -101,7 +105,7 @@ class CommunityVolunteer extends Model implements Auditable
                 'community_volunteer_id',
                 'responsibility_id'
             )
-            ->using('\App\Models\CommunityVolunteers\CommunityVolunteerResponsibility')
+            ->using(CommunityVolunteerResponsibility::class)
             ->withPivot('start_date', 'end_date')
             ->withTimestamps();
     }

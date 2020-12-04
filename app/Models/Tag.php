@@ -1,13 +1,17 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use App\Models\Collaboration\WikiArticle;
+use App\Models\Fundraising\Donor;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Tag extends Model
 {
+    use HasFactory;
     use Sluggable;
     use SluggableScopeHelpers;
 
@@ -16,7 +20,7 @@ class Tag extends Model
      *
      * @return array
      */
-    public function sluggable()
+    public function sluggable(): array
     {
         return [
             'slug' => [
@@ -40,7 +44,7 @@ class Tag extends Model
      */
     public function wikiArticles()
     {
-        return $this->morphedByMany(\App\Models\Collaboration\WikiArticle::class, 'taggable');
+        return $this->morphedByMany(WikiArticle::class, 'taggable');
     }
 
     /**
@@ -48,7 +52,7 @@ class Tag extends Model
      */
     public function donors()
     {
-        return $this->morphedByMany(\App\Models\Fundraising\Donor::class, 'taggable');
+        return $this->morphedByMany(Donor::class, 'taggable');
     }
 
     /**
