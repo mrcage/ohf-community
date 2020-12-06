@@ -32,9 +32,7 @@
                     </strong>
                 </div>
                 <div class="col-sm">
-                    @if($person->gender == 'f')@icon(female) Female
-                    @elseif($person->gender == 'm')@icon(male) Male
-                    @endif
+                    <x-icon-gender :gender="$person->gender" with-label/>
                 </div>
             </div>
         </li>
@@ -116,7 +114,7 @@
                     </strong>
                 </div>
                 <div class="col-sm">
-                    <img src="{{ Storage::url($person->portrait_picture) }}" class="img-fluid img-thumbnail">
+                    <img src="{{ Storage::url($person->portrait_picture) }}" class="img-fluid img-thumbnail" alt="Portrait">
                 </div>
             </div>
         </li>

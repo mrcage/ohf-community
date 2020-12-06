@@ -10,7 +10,7 @@
     </div>
 @endsection
 
-@section('footer')
+@push('footer')
     @php
         $permissions = [
             'configure-accounting' => Gate::allows('configure-accounting'),
@@ -20,4 +20,4 @@
         window.Laravel.permissions = @json($permissions)
     </script>
     <script src="{{ asset('js/accounting.js') }}?v={{ $app_version }}"></script>
-@endsection
+@endpush

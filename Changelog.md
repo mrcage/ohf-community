@@ -1,5 +1,25 @@
 # Changelog
 
+## NEXT
+
+* Removed changelog widget & permissions
+* Added tab navigation for settings
+* Replaced Gravatar with initial-based Avatar image
+* Added alert and icon blade components
+* Removed unnecesary coupon type details view
+* Only show webling booking button if configured
+* Removed google books PHP library, replaced with Javascript solution
+
+## 2.29.0
+
+* Code cleanup
+* Added GS_PATH env variable for Ghostscript on Windows (PDF to Image conversion)
+* Removed DOMPDF dependency
+* Updated ziggy library
+* Separate config file for permissions
+* Updated Sentry.io integration
+* PHP 8 compatibility
+
 ## 2.28.0
 
 * Updated to Laravel 8

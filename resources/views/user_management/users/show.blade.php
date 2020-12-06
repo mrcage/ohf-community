@@ -5,12 +5,15 @@
 @section('content')
 
     @if ($user->id == Auth::id())
-        @component('components.alert.info')
+        <x-alert type="info">
             @lang('app.this_is_your_own_account')
-        @endcomponent
+        </x-alert>
     @endif
 
     <div class="row">
+        <div class="col-md-auto text-center">
+            <x-user-avatar :user="$user" size="120"/>
+        </div>
 
         <div class="col-md">
             <ul class="list-group list-group-flush mb-2">
@@ -24,7 +27,7 @@
                     <div class="row">
                         <div class="col-sm"><strong>@lang('app.email')</strong></div>
                         <div class="col-sm">
-                            <a href="mailto:{{ $user->email }}">{{ $user->email }}</a>
+                            <x-links.email>{{ $user->email }}</x-links.email>
                         </div>
                     </div>
                 </li>
@@ -35,7 +38,9 @@
                             <div class="col-sm">
                                 {!! Form::open(['route' => ['users.disableOAuth', $user], 'method' => 'put']) !!}
                                     <p>{{ $user->provider_name }}</p>
-                                    <button type="submit" class="btn btn-sm btn-secondary" onclick="return confirm('@lang('userprofile.oauth_disable_for_user', [ 'name' => $user->name ])');">@icon(times) @lang('app.disable')</button>
+                                    <button type="submit" class="btn btn-sm btn-secondary" onclick="return confirm('@lang('userprofile.oauth_disable_for_user', [ 'name' => $user->name ])');">
+                                        <x-icon icon="times"/> @lang('app.disable')
+                                    </button>
                                 {!! Form::close() !!}
                             </div>
                         </div>
@@ -76,7 +81,9 @@
                             <div class="col-sm">
                                 {!! Form::open(['route' => ['users.disable2FA', $user], 'method' => 'put']) !!}
                                 <p>@lang('userprofile.tfa_authentication_enabled').</p>
-                                <button type="submit" class="btn btn-sm btn-secondary" onclick="return confirm('@lang('userprofile.tfa_disable_for_user', [ 'name' => $user->name ])');">@icon(times) @lang('app.disable')</button>
+                                <button type="submit" class="btn btn-sm btn-secondary" onclick="return confirm('@lang('userprofile.tfa_disable_for_user', [ 'name' => $user->name ])');">
+                                    <x-icon icon="times"/> @lang('app.disable')
+                                </button>
                                 {!! Form::close() !!}
                             </div>
                         </div>
@@ -85,13 +92,19 @@
                 <li class="list-group-item">
                     <div class="row">
                         <div class="col-sm"><strong>@lang('app.registered')</strong></div>
-                        <div class="col-sm">{{ $user->created_at }} <small class="text-muted pl-2">{{ $user->created_at->diffForHumans() }}</small></div>
+                        <div class="col-sm">
+                            {{ $user->created_at }}
+                            <small class="text-muted pl-2">{{ $user->created_at->diffForHumans() }}</small>
+                        </div>
                     </div>
                 </li>
                 <li class="list-group-item">
                     <div class="row">
                         <div class="col-sm"><strong>@lang('app.last_updated')</strong></div>
-                        <div class="col-sm">{{ $user->updated_at }} <small class="text-muted pl-2">{{ $user->updated_at->diffForHumans() }}</small></div>
+                        <div class="col-sm">
+                            {{ $user->updated_at }}
+                            <small class="text-muted pl-2">{{ $user->updated_at->diffForHumans() }}</small>
+                        </div>
                     </div>
                 </li>
             </ul>

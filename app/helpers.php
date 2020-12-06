@@ -21,13 +21,6 @@ if (! function_exists('list_fa_icons')) {
     }
 }
 
-if (! function_exists('icon')) {
-    function icon(string $value): string
-    {
-        return '<i class="fa fa-' . $value . '"></i>';
-    }
-}
-
 if (! function_exists('simplified_url')) {
     function simplified_url(string $value): string
     {
@@ -45,34 +38,6 @@ if (! function_exists('emailize')) {
         $regex = '/([a-zA-Z0-9_\-\.]*@\S+\.\w+)/';
         $replace = '<a href="mailto:$1">$1</a>';
         return preg_replace($regex, $replace, $text);
-    }
-}
-
-if (! function_exists('email_url')) {
-    function email_url(string $value): string
-    {
-        return 'mailto:' . $value;
-    }
-}
-
-if (! function_exists('email_link')) {
-    function email_link(string $value): string
-    {
-        return '<a href="' . email_url($value) . '">' . $value . '</a>';
-    }
-}
-
-if (! function_exists('tel_url')) {
-    function tel_url(string $value): string
-    {
-        return 'tel:' . preg_replace('/[^+0-9]/', '', $value);
-    }
-}
-
-if (! function_exists('tel_link')) {
-    function tel_link(string $value): string
-    {
-        return '<a href="' . tel_url($value) . '">' . $value . '</a>';
     }
 }
 
@@ -96,13 +61,6 @@ if (! function_exists('whatsapp_link')) {
         }
         $suffix = $text !== null ? '&text=' . urlencode($text) : '';
         return $prefix . preg_replace('/[^0-9]/', '', $value) . $suffix . '">' . $value . '</a>';
-    }
-}
-
-if (! function_exists('skype_link')) {
-    function skype_link(string $value): string
-    {
-        return '<a href="skype:' . $value . '?chat">' . $value . '</a>';
     }
 }
 
@@ -155,29 +113,6 @@ if (! function_exists('previous_route')) {
     }
 }
 
-if (! function_exists('gmaps_url')) {
-    function gmaps_url(string $value): string
-    {
-        return 'http://maps.google.com/maps?q=' . urlencode($value);
-    }
-}
-
-if (! function_exists('gmaps_link')) {
-    function gmaps_link(string $label, string $value, ?array $classes = []): string
-    {
-        $class = count($classes) > 0 ? 'class="' . implode(' ', $classes) . '"' : '';
-        return '<a href="' . gmaps_url($value) . '" target="_blank"' . $class . '>' . $label . '</a>';
-    }
-}
-
-if (! function_exists('gmaps_embedd')) {
-    function gmaps_embedd(string $query): string
-    {
-        $q = urlencode($query);
-        return '<iframe style="width: 100%; border:0;" height="450" frameborder="0" src="https://www.google.com/maps/embed/v1/place?key=' . config('services.google.maps_api_key') . '&amp;q=' . $q . '" allowfullscreen></iframe>';
-    }
-}
-
 if (! function_exists('array_insert')) {
     /**
      * @param array      $array
@@ -211,7 +146,7 @@ if (! function_exists('array_elements_not_blank')) {
     function array_elements_not_blank(array $array, array $keys): bool
     {
         foreach ($keys as $key) {
-            if (! isset($array[$key]) || blank($array[$key])) {
+            if (! filled($array[$key])) {
                 return false;
             }
         }

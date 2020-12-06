@@ -3,26 +3,28 @@
 @section('title', __('people.create_code_card'))
 
 @section('content')
-    @component('components.alert.info')
+    <x-alert type="info">
         @lang('people.code_card_unique')
-    @endcomponent
+    </x-alert>
     {{ Form::open(['route' => 'bank.createCodeCard']) }}
-        {{ Form::bsNumber('pages', 1, ['min' => 1], __('people.number_of_pages')) }}
+        {{ Form::bsNumber('amount', 10, ['min' => 1], __('app.amount'), 'Number of code cards to generate') }}
         <p>
-            {{ Form::bsSubmitButton('@icon(file-pdf-o) ' . __('people.create_pdf'), 'create') }}
+            <x-form.bs-submit-button :label="__('people.create_pdf')" icon="create"/>
         </p>
     {{ Form::close() }}
     <div id="patience-notice" style="display:none">
-        @component('components.alert.info')
+        <x-alert type="info">
             @lang('people.creating_code_card_be_patient')
-        @endcomponent
+        </x-alert>
     </div>
 @endsection
 
-@section('script')
-    $(function () {
-        $('form').on('submit', function () {
-            $('#patience-notice').fadeIn();
+@push('footer')
+    <script>
+        $(function () {
+            $('form').on('submit', function () {
+                $('#patience-notice').fadeIn();
+            });
         });
-    });
-@endsection
+    </script>
+@endpush

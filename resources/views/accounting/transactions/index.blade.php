@@ -118,8 +118,8 @@
             {{ $transactions->appends($filter)->links() }}
         </div>
     @else
-        @component('components.alert.info')
+        <x-alert type="info">
             @lang('accounting.no_transactions_found')
-        @endcomponent
+        </x-alert>
     @endif
 @endsection

@@ -95,6 +95,7 @@ return [
     'severity' => 'Schweregrad',
     'message' => 'Nachricht',
     'no_log_entries_found' => 'Keine Logeinträge gefunden.',
+    'apply' => 'Anwenden',
     'filter' => 'Filter',
     'apply' => 'Anwenden',
     'apply_filter' => 'Filter anwenden',
@@ -430,4 +431,5 @@ return [
     'mobile' => 'Mobiltelefon',
     'place_id' => 'Place ID',
     'details' => 'Details',
+    'changelog' => 'Änderungshistorie',
 ];

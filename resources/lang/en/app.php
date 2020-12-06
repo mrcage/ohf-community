@@ -97,6 +97,7 @@ return [
     'severity' => 'Severity',
     'message' => 'Message',
     'no_log_entries_found' => 'No log entries found.',
+    'apply' => 'Apply',
     'filter' => 'Filter',
     'apply' => 'Apply',
     'apply_filter' => 'Apply filter',
@@ -430,4 +431,5 @@ return [
     'mobile' => 'Mobile',
     'place_id' => 'Place ID',
     'details' => 'Details',
+    'changelog' => 'Changelog',
  ];

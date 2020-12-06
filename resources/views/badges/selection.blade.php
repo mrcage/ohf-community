@@ -12,18 +12,20 @@
             {{ Form::bsFile('alt_logo', [ 'accept' => 'image/*' ], __('app.choose_alternative_logo'), 'Optional: Upload an alternative logo file.') }}
         </div>
         <p>
-            {{ Form::bsSubmitButton(__('app.create')) }}
+            <x-form.bs-submit-button :label="__('app.create')"/>
         </p>
     {!! Form::close() !!}
 @endsection
 
-@section('script')
-    $(function () {
-        $('#select_all').on('click', function () {
-            $('input[type="checkbox"]').prop('checked', true);
+@push('footer')
+    <script>
+        $(function () {
+            $('#select_all').on('click', function () {
+                $('input[type="checkbox"]').prop('checked', true);
+            });
+            $('#select_none').on('click', function () {
+                $('input[type="checkbox"]').prop('checked', false);
+            });
         });
-        $('#select_none').on('click', function () {
-            $('input[type="checkbox"]').prop('checked', false);
-        });
-    });
-@endsection
+    </script>
+@endpush

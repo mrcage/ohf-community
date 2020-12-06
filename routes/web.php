@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ChangelogController;
+use App\Http\Controllers\UserManagement\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -100,14 +102,17 @@ Route::middleware(['auth', 'language'])
             ->name('userprofile.disable2FA');
     });
 
+Route::get('users/{user}/avatar', [UserController::class, 'avatar'])
+    ->name('users.avatar');
+
 //
 // Changelog
 //
 
-Route::middleware(['language', 'auth', 'can:view-changelogs'])
+Route::middleware(['language'])
     ->namespace('Changelog')
     ->group(function () {
-        Route::get('changelog', 'ChangelogController@index')
+        Route::get('changelog', [ChangelogController::class, 'index'])
             ->name('changelog');
     });
 

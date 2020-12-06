@@ -27,7 +27,6 @@ class AppServiceProvider extends ServiceProvider
     protected $dashboardWidgets = [
         \App\Widgets\ReportingWidget::class               => 9,
         \App\Widgets\UserManagement\UsersWidget::class    => 11,
-        \App\Widgets\Changelog\ChangelogWidget::class     => 12,
         \App\Widgets\Fundraising\FundraisingWidget::class => 8,
         \App\Widgets\Accounting\TransactionsWidget::class => 7,
         \App\Widgets\Collaboration\KBWidget::class        => 6,
@@ -77,34 +76,6 @@ class AppServiceProvider extends ServiceProvider
                     return $paginator->withPath('');
                 });
         }
-
-        // Blade directive for showing a Font Awesome icon
-        Blade::directive('icon', fn ($name) => '<i class="fa fa-' . $name . '"></i>');
-
-        // Exposes checks agains a specific gate
-        Blade::if('allowed', function ($gate) {
-            if (is_array($gate)) {
-                foreach ($gate as $g) {
-                    if (Gate::allows($g)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-            return Gate::allows($gate);
-        });
-
-        // Blade directive to create a link to a telephone number
-        Blade::directive('tel', fn ($expression) => "<?php echo tel_link(${expression}); ?>");
-
-        // Blade directive to create a link to a WhatsApp number
-        Blade::directive('whatsapp', fn ($expression) => "<?php echo whatsapp_link(${expression}); ?>");
-
-        // Blade directive to create a link to an email address
-        Blade::directive('email', fn ($expression) => "<?php echo email_link(${expression}); ?>");
-
-        // Blade directive to create a link to call a skype name
-        Blade::directive('skype', fn ($expression) => "<?php echo skype_link(${expression}); ?>");
 
         // UTF-8 support for Carbon time
         Carbon::setUtf8(true);

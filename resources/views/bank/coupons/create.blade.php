@@ -60,17 +60,19 @@
         </div>
 
         <p>
-            {{ Form::bsSubmitButton(__('app.create')) }}
+            <x-form.bs-submit-button :label="__('app.create')"/>
         </p>
 
     {!! Form::close() !!}
 
 @endsection
 
-@section('script')
-$(function () {
-    $('#icon').on('change', function() {
-        $('#icon-addon').html('<i class="fa fa-' + $(this).val() + '"></i>');
-    });
-});
-@endsection
+@push('footer')
+    <script>
+        $(function () {
+            $('#icon').on('change', function() {
+                $('#icon-addon').html('<i class="fa fa-' + $(this).val() + '"></i>');
+            });
+        });
+    </script>
+@endpush

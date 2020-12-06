@@ -1,5 +1,5 @@
-<!doctype html>
-<html lang="{{ config('app.locale') }}" class="h-100">
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-100">
     @include('layouts.include.head')
     <body class="h-100 d-flex flex-column">
 
@@ -25,39 +25,36 @@
 
                         {{-- Success message --}}
                         @if (session('success'))
-                            <div class="snack-message"><span class="pr-1">@icon(check-square)</span> {{ session('success') }}</div>
+                            <div class="snack-message">
+                                <x-icon icon="check-square" class="pr-1"/>
+                                {{ session('success') }}
+                            </div>
                         @endif
 
                         {{-- Info message --}}
                         @if (session('info'))
-                            <div class="snack-message">{{ session('info') }}</div>
+                            <div class="snack-message">
+                                {{ session('info') }}
+                            </div>
                         @endif
 
                         {{-- Error message --}}
                         @if (session('error'))
-                            <div class="alert alert-danger alert-dismissible fade show">
-                                @icon(exclamation-triangle) {{ session('error') }}
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
+                            <x-alert type="danger" dismissible>
+                                {{ session('error') }}
+                            </x-alert>
                         @endif
 
                         {{-- Validation error --}}
                         @if (count($errors) > 0)
-                            <div class="alert alert-danger alert-dismissible fade show">
-                                @icon(exclamation-triangle) @lang('app.validation_failed')
-
+                            <x-alert type="warning" dismissible>
+                                @lang('app.validation_failed')
                                 <ul class="mb-0 pb-0">
                                     @foreach ($errors->all() as $error)
                                         <li>{{ $error }}</li>
                                     @endforeach
                                 </ul>
-
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
+                            </x-alert>
                         @endif
 
                         {{-- Content --}}
@@ -65,7 +62,12 @@
 
                         {{-- Floating action button --}}
                         @if(isset($buttons['action']) && $buttons['action']['authorized'] )
-                            @include('components.action-button', [ 'route' => $buttons['action']['url'], 'icon' => $buttons['action']['icon_floating'] ])
+                            <a
+                                href="{{ $buttons['action']['url'] }}"
+                                class="btn btn-primary btn-lg d-md-none floating-action-button"
+                            >
+                                <x-icon :icon="$buttons['action']['icon_floating']"/>
+                            </a>
                         @endif
 
                     </article>
@@ -80,13 +82,9 @@
 
         </div>
 
-        @yield('content-footer')
-
         <script src="{{ asset('js/app.js') }}?v={{ $app_version }}"></script>
-        <script>
-            @yield('script')
-        </script>
-        @yield('footer')
 
+        {{-- Stack for additional scripts --}}
+        @stack('footer')
     </body>
 </html>

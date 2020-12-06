@@ -23,18 +23,16 @@
             </div>
         </div>
         <p>
-            {{ Form::bsSubmitButton(__('app.update')) }}
+            <x-form.bs-submit-button :label="__('app.update')"/>
         </p>
 
     {!! Form::close() !!}
 
 @endsection
 
-@section('head-meta')
+@push('head')
     <link href="{{ asset('css/summernote-bs4.css') }}?v={{ $app_version }}" rel="stylesheet" type="text/css">
-@endsection
+    <script src="{{ asset('js/summernote-bs4.js') }}?v={{ $app_version }}" defer></script>
+    <script src="{{ asset('js/editor.js') }}?v={{ $app_version }}" defer></script>
+@endpush
 
-@section('footer')
-    <script src="{{ asset('js/summernote-bs4.js') }}?v={{ $app_version }}"></script>
-    <script src="{{ asset('js/editor.js') }}?v={{ $app_version }}"></script>
-@endsection

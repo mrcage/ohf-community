@@ -19436,7 +19436,7 @@ readers do not read off random characters that represent icons */
   }
 }
 .userprofile-nav.userprofile-nav {
-  top: 50px;
+  top: 44px;
   box-shadow: none;
   right: -15px;
 }
@@ -19634,4 +19634,11 @@ div.long-description.collapsing[aria-expanded=false] {
   content: "*";
   color: red;
   margin-left: 3px;
+}
+
+/**
+* Avatar
+*/
+img.avatar {
+  border-radius: 100%;
 }

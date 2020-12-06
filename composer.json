@@ -7,21 +7,12 @@
         "laravel"
     ],
     "license": "MIT",
-    "repositories":
-    [
-        {
-            "type": "vcs",
-            "url": "https://github.com/clptwebdev/php-google-books"
-        }
-    ],
     "require": {
         "php": "^7.4.0|^8.0",
         "akaunting/language": "^1.0",
         "anlutro/l4-settings": "^1.0",
-        "creativeorange/gravatar": "~1.0",
         "cviebrock/eloquent-sluggable": "^8.0",
         "doctrine/dbal": "^2.6",
-        "dompdf/dompdf": "^0.8.2",
         "dyrynda/laravel-nullable-fields": "^4.0",
         "endroid/qr-code": "^3.1",
         "exolnet/laravel-sqlite-fluent-drop-foreign": "^1.1",
@@ -35,6 +26,7 @@
         "laravel/socialite": "^5.0",
         "laravel/ui": "^3.0",
         "laravelcollective/html": "^6.0",
+        "lasserafn/php-initial-avatar-generator": "^4.2",
         "maatwebsite/excel": "^3.1",
         "maennchen/zipstream-php": "^2.0",
         "michelf/php-markdown": "^1.8",
@@ -45,7 +37,6 @@
         "org_heigl/ghostscript": "^2.3",
         "owen-it/laravel-auditing": "^11.0",
         "petercoles/multilingual-language-list": "^1.1",
-        "scriptotek/google-books": "dev-master",
         "sentry/sentry-laravel": "^2.3",
         "shiftonelabs/laravel-cascade-deletes": "^1.0",
         "spatie/pdf-to-image": "^2.0",
@@ -59,8 +50,8 @@
         "barryvdh/laravel-ide-helper": "^2.6",
         "djedaini/laravel-vue-i18n-generator": "^0.1.47",
         "facade/ignition": "^2.5",
+        "fakerphp/faker": "^1.12",
         "filp/whoops": "~2.0",
-        "fzaninotto/faker": "^1.9.1",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.0"

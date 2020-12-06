@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -40,24 +41,36 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+        $this->registerSuperAdminAccess();
         $this->registerPermissionGateMappings();
     }
 
-    protected function registerPermissionGateMappings() {
-        foreach (config('permissions.gate_mapping') as $gate => $permission) {
-            Gate::define($gate, function ($user) use ($permission) {
-                if ($user->isSuperAdmin()) {
-                    return true;
-                }
-                if (is_array($permission)) {
-                    $hasPermission = false;
-                    foreach ($permission as $pe) {
-                        $hasPermission |= $user->hasPermission($pe);
+    protected function registerSuperAdminAccess()
+    {
+        Gate::before(function (User $user) {
+            if ($user->isSuperAdmin()) {
+                return true;
+            }
+        });
+    }
+
+    protected function registerPermissionGateMappings()
+    {
+        $mapping = config('permissions.gate_mapping');
+        if (is_array($mapping)) {
+            foreach ($mapping as $gate => $permission) {
+                Gate::define($gate, function (User $user) use ($permission) {
+                    if (is_array($permission)) {
+                        foreach ($permission as $pe) {
+                            if ($user->hasPermission($pe)) {
+                                return true;
+                            }
+                        }
+                        return false;
                     }
-                    return $hasPermission;
-                }
-                return $user->hasPermission($permission);
-            });
+                    return $user->hasPermission($permission);
+                });
+            }
         }
     }
 }

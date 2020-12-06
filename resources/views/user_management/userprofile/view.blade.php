@@ -12,7 +12,7 @@
                     {!! Form::open(['route' => ['userprofile.update']]) !!}
                         {{ Form::bsText('name', $user->name, [ 'required' ], __('userprofile.name')) }}
                         {{ Form::bsEmail('email', $user->email, [ ! empty($user->provider_name) ? 'disabled' : 'required' ], __('userprofile.email')) }}
-                        {{ Form::bsSubmitButton(__('userprofile.update')) }}
+                        <x-form.bs-submit-button :label="__('userprofile.update')"/>
                     {!! Form::close() !!}
                 </div>
             </div>
@@ -25,7 +25,7 @@
                             {{ Form::bsPassword('old_password', [ 'required' ], __('userprofile.old_password')) }}
                             {{ Form::bsPassword('password', [ 'required' ], __('userprofile.new_password')) }}
                             {{ Form::bsPassword('password_confirmation', [ 'required' ], __('userprofile.confirm_password')) }}
-                            {{ Form::bsSubmitButton(__('userprofile.update_password')) }}
+                            <x-form.bs-submit-button :label="__('userprofile.update_password')"/>
                         {!! Form::close() !!}
                     </div>
                 </div>
@@ -34,32 +34,21 @@
                     <div class="card-header">@lang('userprofile.tfa_authentication')</div>
                     <div class="card-body">
                         @empty($user->tfa_secret)
-                            @component('components.alert.info')
+                            <x-alert type="info">
                                 @lang('userprofile.tfa_enable_recommendation', [ 'url' => route('userprofile.view2FA') ])
-                            @endcomponent
-                            @component('components.alert.warning')
+                            </x-alert>
+                            <x-alert type="warning">
                                 @lang('userprofile.tfa_authentication_not_enabled')
-                            @endcomponent
-                            <a href="{{ route('userprofile.view2FA') }}" class="btn btn-primary">@icon(check) @lang('app.enable')</a>
+                            </x-alert>
+                            <a href="{{ route('userprofile.view2FA') }}" class="btn btn-primary">
+                                <x-icon icon="check"/> @lang('app.enable')
+                            </a>
                         @else
                             <p>@lang('userprofile.tfa_authentication_enabled')</p>
-                            <a href="{{ route('userprofile.view2FA') }}" class="btn btn-primary">@icon(times) @lang('app.disable')</a>
+                            <a href="{{ route('userprofile.view2FA') }}" class="btn btn-primary">
+                                <x-icon icon="times"/> @lang('app.disable')
+                            </a>
                         @endempty
-                    </div>
-                </div>
-
-                <div class="card mb-4">
-                    <div class="card-header">@lang('userprofile.avatar')</div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-auto">
-                                <img src="{{ Auth::user()->avatarUrl('userprofile') }}" alt="Gravatar" class="img-responsive">
-                            </div>
-                            <div class="col align-self-center">
-                                <p><a href="https://gravatar.com/emails/" target="_blank" class="btn btn-secondary">@icon(sync) @lang('userprofile.change_picture')</a></p>
-                                @lang('userprofile.avatars_provided_by_gravatar')
-                            </div>
-                        </div>
                     </div>
                 </div>
             @endunless
@@ -71,7 +60,7 @@
                         @foreach (language()->allowed() as $code => $name)
                             <li class="list-group-item">
                                 @if(App::getLocale() == $code)
-                                    <span class="text-success">@icon(check)</span>
+                                    <x-icon icon="check" class="text-success"/>
                                 @else
                                     <span class="d-inline-block" style="width: 1em"></span>
                                 @endif
@@ -87,15 +76,19 @@
             <div class="card mb-4">
                 <div class="card-header">@lang('userprofile.account_information')</div>
                 <div class="card-body pb-2">
+                    <p>
+                        <x-user-avatar :user="Auth::user()" size="80"/>
+                    </p>
                     <p>@lang('userprofile.account_created_on') <strong>{{ $user->created_at }}</strong>
                         @lang('userprofile.account_updated_on') <strong>{{ $user->updated_at }}</strong>.
                     </p>
                     @if (! $user->roles->isEmpty())
-                        <p>@lang('userprofile.your_roles'):
+                        <p>@lang('userprofile.your_roles'):</p>
+                        <ul>
                             @foreach ($user->roles->sortBy('name') as $role)
-                                {{ $role->name }}@if (! $loop->last), @endif
+                                <li>{{ $role->name }}</li>
                             @endforeach
-                        </p>
+                        </ul>
                     @endif
                     @isset($user->provider_name)
                         <p>@lang('app.oauth_provider'): {{ $user->provider_name }}</p>
@@ -108,7 +101,11 @@
                 <div class="card-body">
                     <p>@lang('userprofile.account_remove_desc')</p>
                     {!! Form::open(['route' => ['userprofile.delete'], 'method' => 'delete']) !!}
-                        {{ Form::bsDeleteButton(__('userprofile.delete_account'), 'user-times', __('userprofile.delete_confirm')) }}
+                        <x-form.bs-delete-button
+                            :label="__('userprofile.delete_account')"
+                            icon="user-times"
+                            :confirmation="__('userprofile.delete_confirm')"
+                        />
                     {!! Form::close() !!}
                 </div>
             </div>
