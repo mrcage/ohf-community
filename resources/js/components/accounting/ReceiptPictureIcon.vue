@@ -4,13 +4,18 @@
         icon="spinner"
         spin
     />
-    <a
-        v-else-if="pics.length > 0"
-        :href="pics[0].url"
-        data-lity
-    >
-        <font-awesome-icon :icon="icon"/>
-    </a>
+    <span v-else-if="pics.length > 0">
+        <a
+            :href="pics[0].url"
+            @click.prevent="openLightbox"
+        >
+            <font-awesome-icon :icon="icon"/>
+        </a>
+        <fs-lightbox
+            :toggler="toggler"
+            :sources="lightboxSources"
+        />
+    </span>
     <span v-else-if="allowUpload">
         <a
             href="#"
@@ -35,7 +40,12 @@
 
 <script>
 import transactionsApi from '@/api/accounting/transactions'
+import IframeSource from '@/components/IframeSource'
+import FsLightbox from "fslightbox-vue"
 export default {
+    components: {
+        FsLightbox
+    },
     props: {
         transactionId: {
             required: true
@@ -50,12 +60,24 @@ export default {
     data () {
         return {
             isBusy: false,
-            pics: this.pictures
+            pics: this.pictures,
+            toggler: false,
         }
     },
     computed: {
         icon () {
             return this.pics.length > 1 ? 'images' : 'image'
+        },
+        lightboxSources () {
+            return this.pics.map(picture => {
+                    if (picture.mime_type.startsWith('image/')) {
+                        return picture.url
+                    }
+                    return {
+                        component: IframeSource,
+                        props: { source: picture.url }
+                    }
+                })
         }
     },
     methods: {
@@ -69,6 +91,9 @@ export default {
                 alert(err)
             }
             this.isBusy = false
+        },
+        openLightbox() {
+            this.toggler = !this.toggler
         }
     }
 }

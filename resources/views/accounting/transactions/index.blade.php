@@ -9,7 +9,7 @@
             <table class="table table-sm table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th class="fit text-center @if(isset($filter['receipt_no']) || isset($filter['no_receipt'])) text-info @endif"><span class="d-none d-sm-inline">@lang('accounting.receipt') </span>#</th>
+                        <th colspan="2" class="fit text-center @if(isset($filter['receipt_no']) || isset($filter['no_receipt'])) text-info @endif"><span class="d-none d-sm-inline">@lang('accounting.receipt') </span>#</th>
                         <th class="fit @if(isset($filter['date_start']) || isset($filter['date_end']) || isset($filter['month'])) text-info @endisset">@lang('app.date')</th>
                         <th class="fit d-table-cell d-sm-none text-right">@lang('app.amount')</th>
                         <th class="fit d-none d-sm-table-cell text-right @if(isset($filter['type']) && $filter['type']=='income') text-info @endisset">@lang('accounting.income')</th>
@@ -39,7 +39,28 @@
                 <tbody>
                     @foreach ($transactions as $transaction)
                         <tr>
-                            <td class="@if(empty($transaction->receipt_pictures) && isset($transaction->receipt_no)) table-warning receipt-picture-missing @endif text-center" data-transaction-id="{{ $transaction->id }}">
+                            <td class="fit text-center cursor-pointer @if(empty($transaction->receipt_pictures) && isset($transaction->receipt_no)) table-warning receipt-picture-missing @else table-success @endif" data-transaction-id="{{ $transaction->id }}">
+                                @isset($transaction->receipt_no)
+                                    @if(filled($transaction->receipt_pictures))
+                                        @php
+                                            $urls = collect($transaction->receipt_pictures)
+                                                ->filter(fn ($picture) => Storage::exists($picture))
+                                                ->map(fn ($picture) => [ 'url' => Storage::url($picture), 'image' => Str::startsWith(Storage::mimeType($picture), 'image/')]);
+                                            if ($urls->filter(fn ($data) => $data['image'])->isNotEmpty()) {
+                                                $icon = $urls->count() > 1 ? 'images' : 'image';
+                                            } else {
+                                                $icon = 'file';
+                                            }
+                                        @endphp
+                                        @if(filled($urls))
+                                            <x-icon :icon="$icon" :data-urls='$urls->toJson()' class="lightbox" />
+                                        @endif
+                                    @else
+                                        <x-icon icon="upload" />
+                                    @endif
+                                @endisset
+                            </td>
+                            <td class="fit text-right" >
                                 {{ $transaction->receipt_no }}
                             </td>
                             <td class="fit">

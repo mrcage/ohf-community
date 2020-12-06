@@ -172,14 +172,14 @@
                 <transition-group name="list" tag="div" class="grid mb-3">
                     <template v-if="transaction.receipt_pictures.length > 0">
                         <div
-                            v-for="picture in transaction.receipt_pictures"
+                            v-for="(picture, idx) in transaction.receipt_pictures"
                             :key="picture.url"
                         >
                             <template v-if="picture.thumbnail">
                                 <a
                                     :href="picture.url"
-                                    data-lity
                                     style="position: relative"
+                                    @click.prevent="openLightboxOnSlide(idx + 1)"
                                 >
                                     <square-thumbnail
                                         :src="picture.thumbnail"
@@ -217,6 +217,12 @@
                         />
                     </div>
                 </transition-group>
+                <fs-lightbox
+                    :toggler="toggler"
+                    :slide="slide"
+                    :sources="lightboxSources(transaction.receipt_pictures)"
+                    :key="`lightbox-${transaction.receipt_pictures.length}`"
+                />
             </b-col>
 
         </b-row>
@@ -233,11 +239,14 @@ import transactionsApi from '@/api/accounting/transactions'
 import TwoColListGroupItem from '@/components/ui/TwoColListGroupItem'
 import SquareThumbnail from '@/components/ui/SquareThumbnail'
 import AddReceiptPictureButton from '@/components/accounting/AddReceiptPictureButton'
+import FsLightbox from "fslightbox-vue"
+import IframeSource from '@/components/IframeSource'
 export default {
     components: {
         TwoColListGroupItem,
         SquareThumbnail,
-        AddReceiptPictureButton
+        AddReceiptPictureButton,
+        FsLightbox
     },
     props: {
         id: {
@@ -248,7 +257,9 @@ export default {
         return {
             transaction: null,
             isBusy: false,
-            thumbnailSize: config('accounting.thumbnail_size')
+            thumbnailSize: config('accounting.thumbnail_size'),
+            toggler: false,
+            slide: 1
         }
     },
     watch: {
@@ -320,6 +331,21 @@ export default {
                 }
                 this.isBusy = false
             }
+        },
+        openLightboxOnSlide (number) {
+            this.slide = number
+            this.toggler = !this.toggler
+        },
+        lightboxSources (pictures) {
+            return pictures.map(picture => {
+                    if (picture.mime_type.startsWith('image/')) {
+                        return picture.url
+                    }
+                    return {
+                        component: IframeSource,
+                        props: { source: picture.url }
+                    }
+                })
         }
     }
 }

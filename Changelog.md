@@ -1,6 +1,6 @@
 # Changelog
 
-## NEXT
+## 2.30.0
 
 * Removed changelog widget & permissions
 * Added tab navigation for settings
@@ -9,6 +9,8 @@
 * Removed unnecesary coupon type details view
 * Only show webling booking button if configured
 * Removed google books PHP library, replaced with Javascript solution
+* Replaced lity lightbox with fsightbox which has a gallery feature
+* Separated receipt icon in transactions view and added progress icon, fixed error handling
 
 ## 2.29.0
 
