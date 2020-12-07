@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.30.1
+
+* Supplier search now also considers IBAN, tax number and phone
+* Added pretty-routes package
+
 ## 2.30.0
 
 * Removed changelog widget & permissions
