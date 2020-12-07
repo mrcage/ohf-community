@@ -6,6 +6,7 @@ use App\Http\Controllers\Accounting\SummaryController;
 use App\Http\Controllers\Accounting\WalletController;
 use App\Http\Controllers\Accounting\WeblingApiController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Badges\BadgeMaker2Controller;
 use App\Http\Controllers\Badges\BadgeMakerController;
 use App\Http\Controllers\Bank\CodeCardController;
 use App\Http\Controllers\Bank\CouponTypesController;
@@ -158,6 +159,9 @@ Route::middleware(['language', 'auth'])
                     ->name('make');
             });
     });
+
+Route::get('/badges2', [BadgeMaker2Controller::class, 'index'])
+    ->name('index2');
 
 //
 // Fundraising
